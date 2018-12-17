@@ -127,10 +127,31 @@ html, body{
 }
 
 #incidents-by-year-trellis{
-    height: 80%;
+    height: 60%;
 }
 .incidents-trellis{
     float: left;
     margin-left: 25px;
 }
 
+.muze-tooltip-box,#incidents-by-year-heatmap .muze-tooltip-content-container,
+ #incidents-by-year-trellis .muze-tooltip-content-container {
+    padding-top: 0px !important;
+    padding-bottom: 2px !important;
+}
+
+.tooltip-mod{
+    left: 10px;
+}
+
+.tooltip-header{
+    font-size: 20px;
+    margin: 0px;
+    font-weight: 600;
+}
+
+.tooltip-sub-header{
+    font-size: 16px;
+    margin: 0px;
+    font-weight: 400;
+}
