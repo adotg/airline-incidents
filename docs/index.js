@@ -361,6 +361,8 @@ fetch("data.json").then(resp =>
       .dissociateSideEffect(['highlighter', 'brush'])
       .dissociateSideEffect(['selectionBox', 'brush'])
 
+      
+
     const trellisCanvases = [];
     airlines.forEach((e, i) => {
       const parentDiv = document.getElementById(
@@ -406,6 +408,67 @@ fetch("data.json").then(resp =>
 
         })
         .mount(newElement);
+
+        if(e[0]=== 'indigo'){
+            canvas
+            .transform({
+                airbusA230DM :dt => dt.select(fields=> {
+                    const airbusDate = new Date(fields.Date.value);
+                    return airbusDate.getMonth() === 7 && airbusDate.getFullYear() === 2015
+                }),
+            })
+            .layers([{
+                mark: 'line'
+            }, {
+                mark: 'tick',
+                name: 'introAirBusA320',
+                className: 'introAirBusA320',
+                encoding: {
+                    y: {
+                        field: null
+                    },
+                    x: 'Date',
+                    color: {
+                        value: () => 'red'
+                    }
+                },
+                calculateDomain: false,
+                source: 'airbusA230DM',
+                interactive: false
+            },{
+                mark: 'text',
+                name: 'introAirBusA320Text',
+                className: 'introAirBusA320Text',
+                encoding: {
+                    y: {
+                        field: null
+                    },
+                    text: {
+                        field: 'Date',
+                        formatter: (value) => {
+                            return `Introduction of AirBus A320`;
+                        }
+                    },
+                    x: 'Date',
+                    color: {
+                        value: () => '#414141'
+                    },
+                   
+                },
+                encodingTransform: (points, layer, dependencies) => {
+                    let smartLabel = dependencies.smartLabel;
+                    for (let i = 0; i < points.length; i++) {
+                        let size = smartLabel.getOriSize(points[i].text);
+                        points[i].update.y += size.height;
+                        points[i].update.x -= size.width / 2 + 5;
+                    }
+                    return points;
+                },
+                calculateDomain: false,
+                source: 'airbusA230DM',
+                interactive: false
+            }])
+        }
 
       trellisCanvases.push(canvas);
     });
