@@ -1,0 +1,86 @@
+html, body{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+
+#airline-incidents{
+    width: calc(100% - 200px);
+    margin-left: 100px;
+    height: 100%;
+}
+.page-header{
+    width: 100%;
+    height: 5%;
+    margin-top: 10px;
+    font-size: 24px;
+    text-align: center
+}
+.component{
+    height: 10px;
+    width: 10px;
+    float: left;
+    margin-bottom: 50px;
+    background: #eee;
+}
+
+.header{
+    color: #a7a7a7;
+    margin-left: 25px;
+    margin-top: 10px;
+    font-size: 16px;
+    height: 20px;
+    width: calc(100% - 25px);
+    float: left;
+}
+.content{
+    margin: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 40px);
+    float: left;
+}
+
+#number-of-incidents{
+    height: 18%;
+    width: 16%;
+}
+
+#number-of-incidents-content{
+    font-size: 24px;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#incidents-breakup{
+    height: 15%;
+    width: calc(84% - 25px);
+    margin-left: 25px;
+    background: none;
+}
+
+#incidents-by-year-step,
+#incidents-by-year-heatmap,
+#incidents-by-year-trellis{
+    width: 100%;
+}
+#incidents-by-year-step{
+   height: 30%;
+}
+#incidents-by-year-heatmap{
+    height: 30%;
+}
+#incidents-by-year-trellis{
+    height: 80%;
+}
+.incidents-trellis{
+    float: left;
+    margin-left: 25px;
+}
+

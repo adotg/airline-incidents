@@ -1,16 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link href="https://cdn.charts.com/lib/muze/core/latest/themes/muze.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
+
 <body>
-    <div id="timeline-viz"></div>
+    <!-- <div id="timeline-viz"></div> -->
+
+    <div id="airline-incidents">
+        <div class = "page-header">Airline Incidents</div>
+        <div class="component" id="number-of-incidents">
+            <div id="number-of-incidents-header" class="header">
+                Total # of Incidents
+            </div>
+            <div id="number-of-incidents-content" class="content">
+
+            </div>
+        </div>
+        <div class="component" id="incidents-breakup">
+
+        </div>
+        <div class="component" id="incidents-by-year-step">
+            <div id="incidents-by-year-step-header" class="header">
+                Airline Incidents By Year
+            </div>
+            <div id="incidents-by-year-step-content" class="content">
+
+            </div>
+        </div>
+        <div class="component" id="incidents-by-year-heatmap">
+            <div id="incidents-by-year-heatmap-header" class="header">
+                Airline Incidents By Year
+            </div>
+            <div id="incidents-by-year-heatmap-content" class="content">
+
+            </div>
+        </div>
+        <div class="component" id="incidents-by-year-trellis">
+            <div id="incidents-by-year-trellis-header" class="header">
+                Cumulative Incidents by Year per Airline
+            </div>
+            <div id="incidents-by-year-trellis-content" class="content">
+
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript" src="https://cdn.charts.com/lib/muze/core/latest/muze.js"></script>
     <script type="text/javascript" src="index.js"></script>
 </body>
+
 </html>
