@@ -4,7 +4,7 @@ const cumulativeCalculationAirlineDate = dm => {
   let i = 0;
   let j = 0;
   // Create a variable to create pseudo axis
-  return dm.sort([["Airline"], ["Monthly Date"]]).calculateVariable(
+  return dm.sort([["Airline"], ["Date"]]).calculateVariable(
     {
       name: "Number of Incidents by Airline",
       type: "measure",
@@ -12,7 +12,7 @@ const cumulativeCalculationAirlineDate = dm => {
     },
     [
       "Airline",
-      "Monthly Date",
+      "Date",
       (al, date) => {
         if (date === currDate && al === currAirLine) {
           j++;
@@ -70,15 +70,15 @@ const tooltipFormatter = (dataModel, variables)=>{
 
     let tooltipContent = [];
     tooltipData.forEach((dataArray, i) => {
-        const monthlyDate = dataArray[fieldConfig[variables[0]].index];
+        const dateVar = dataArray[fieldConfig[variables[0]].index];
         const num = dataArray[fieldConfig[variables[1]].index];
-        const date =  new Date(monthlyDate)
+        const date =  new Date(dateVar)
 
         tooltipContent[0] = [{
             value: variables[0],
             className: 'muze-tooltip-key'
         }, {
-            value: `${months[date.getMonth()]}-${date.getFullYear()}`,
+            value: `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`,
             className: 'muze-tooltip-value'
         }]
         
@@ -101,6 +101,7 @@ fetch("data.json").then(resp =>
   resp.json().then(data => {
     const DataModel = muze.DataModel;
     const html = muze.Operators.html;
+   
 
     data = data
       .filter(row => !!row[1]) /* Delets rows which does not contain any data */
@@ -108,7 +109,7 @@ fetch("data.json").then(resp =>
 
     const nData = [["Airline", "Date", "Details"]];
     data.forEach(row => nData.push(row));
-
+   
     const schema = [
       {
         name: "Airline",
@@ -176,7 +177,7 @@ fetch("data.json").then(resp =>
     // DataModel for the cumulative line chart
    let incidentDm = calcCumulative(
       sdm,
-      "Monthly Date",
+      "Date",
       "Number of Incidents"
     );
 
@@ -190,7 +191,7 @@ fetch("data.json").then(resp =>
     // DataModel for the heatmap
     airlineDM = airlineDM.calculateVariable(
       {
-        name: "incident-count-2",
+        name: "c",
         type: "dimension"
       },
       [
@@ -204,16 +205,29 @@ fetch("data.json").then(resp =>
     // DataModel for the trellis
     const trellisDM = cumulativeCalculationAirlineDate(dm);
 
+    const colorsForAirlines =  [
+        "#001197",
+        "#f6e291",
+        "#f3a737",
+        "#f11a12",
+        "#592b50",
+        "#1c5891"
+      ];
+
     // Main KPI
     document.getElementById(
       "number-of-incidents-content"
     ).innerHTML = sdm.groupBy([""]).getData().data[0][0];
 
+
+
     // Canvas for incident counts
     const canvas1 = muze()
       .canvas()
       .data(airlineDM.sort([["incident-count"]]))
-      .rows(["incident-count-2"])
+      .rows(["c"])
+      .minUnitHeight(10)
+        .height(100)
       .columns(["incident-count"])
       .color({
         field: "Airline",
@@ -225,14 +239,7 @@ fetch("data.json").then(resp =>
           "vistara",
           "goair"
         ],
-        range: [
-          "#001197",
-          "#f6e291",
-          "#f3a737",
-          "#f11a12",
-          "#592b50",
-          "#1c5891"
-        ]
+        range: colorsForAirlines
       })
       .layers([
         {
@@ -260,29 +267,48 @@ fetch("data.json").then(resp =>
         legend: {
           position: "bottom",
           color: {
-            title: {
-              text: " "
-            }
+           show: false
           }
         },
         axes: {
           y: {
             show: false,
-            name: "s"
           },
           x: {
             show: false
           }
         }
       })
-      .mount("#incidents-breakup");
+      .mount("#incidents-breakup-viz");
+
+      const parentLegendDiv = document.getElementById('incidents-breakup-legend');
+      const legendElem = document.createElement('div');
+
+      airlines.forEach((e,i)=>{
+        const legendElemInner = document.createElement('div');
+        legendElemInner.setAttribute("id", `legend-${i}`);
+        legendElemInner.setAttribute("class", `incidents-legend`);
+        const box = `<div style = 'background: ${colorsForAirlines[i]}; color: ${colorsForAirlines[i]}' class = 'legend-box'>xxx</div>`
+        legendElemInner.innerHTML = `${box} <div class = 'legend-text'>${jsUcfirst(e[0])} : ${e[1]} (${(e[1] * 100/155).toFixed(1)}%)</div>`
+        legendElem.appendChild(legendElemInner)
+      })
+      parentLegendDiv.appendChild(legendElem)
+
+      muze.ActionModel.for(canvas1)
+      .dissociateSideEffect(['tooltip', 'highlight'])
+      .dissociateSideEffect(['crossline', 'highlight'])
+      .dissociateSideEffect(['highlighter', 'highlight'])
+     .dissociateSideEffect(['highlighter', 'brush'])
+      .dissociateSideEffect(['selectionBox', 'brush'])
+
+      ;
 
     // Canvas for cumulative incident counts
     const canvas2 = muze()
       .canvas()
       .data(incidentDm)
       .rows(["Number of Incidents"])
-      .columns(["Monthly Date"])
+      .columns(["Date"])
       .color({
         value: "#414141"
       })
@@ -300,11 +326,12 @@ fetch("data.json").then(resp =>
         },
         interaction: {
           tooltip: {
-            formatter: dataModel => tooltipFormatter(dataModel, ['Monthly Date',  "Number of Incidents"])
+            formatter: dataModel => tooltipFormatter(dataModel, ['Date',  "Number of Incidents"])
           }
         }
       })
       .mount("#incidents-by-year-step-content");
+    
 
     // Canvas for the heat map airline vs year
     const canvas3 = muze()
@@ -328,6 +355,11 @@ fetch("data.json").then(resp =>
         }
       })
       .mount("#incidents-by-year-heatmap-content");
+     muze.ActionModel.for(canvas1, canvas3)
+      .dissociateSideEffect(['highlighter', 'select'])
+      .dissociateSideEffect(['tooltip', 'brush,select'])
+      .dissociateSideEffect(['highlighter', 'brush'])
+      .dissociateSideEffect(['selectionBox', 'brush'])
 
     const trellisCanvases = [];
     airlines.forEach((e, i) => {
@@ -350,7 +382,7 @@ fetch("data.json").then(resp =>
         .canvas()
         .data(newDm)
         .rows(["Number of Incidents by Airline"])
-        .columns(["Monthly Date"])
+        .columns(["Date"])
         .color({
           value: "#414141"
         })
@@ -362,12 +394,13 @@ fetch("data.json").then(resp =>
               domain: [dates[0], dates[dates.length - 1]]
             },
             y: {
-              name: "Number of Incidents"
+              name: "Number of Incidents",
+              domain: [0,60]
             }
           },
           interaction: {
             tooltip: {
-              formatter: dataModel => tooltipFormatter(dataModel, ['Monthly Date',  "Number of Incidents by Airline"])
+              formatter: dataModel => tooltipFormatter(dataModel, ['Date',  "Number of Incidents by Airline"])
             }
           }
 

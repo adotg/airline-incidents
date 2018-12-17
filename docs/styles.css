@@ -27,12 +27,20 @@ html, body{
     font-size: 24px;
     text-align: center
 }
+#incidents-breakup .muze-legend-title{
+    height: 0px !important;
+}
+
+#incidents-breakup .muze-legend-body{
+    overflow-y: none !important;
+}
 .component{
     height: 10px;
     width: 10px;
     float: left;
     margin-bottom: 50px;
     background: #eee;
+    min-height: 200px;
 }
 
 .header{
@@ -51,7 +59,8 @@ html, body{
 }
 
 #number-of-incidents{
-    height: 20%;
+    height: 10%;
+    min-height: 130px;
     width: 23%;
 }
 
@@ -68,11 +77,34 @@ html, body{
     justify-content: center;
 }
 
+
 #incidents-breakup{
     height: 15%;
     width: calc(77% - 25px);
+    min-height: 130px;
     margin-left: 25px;
     background: none;
+}
+
+#incidents-breakup-viz,
+#incidents-breakup-legend{
+    width: 100%;
+}
+#incidents-breakup-legend{
+    /* margin-top: 1px; */
+    font-size: 12px;
+}
+.incidents-legend{
+ float: left;
+ margin: 5px;
+}
+.legend-text{
+    float: left;
+}
+.legend-box{
+    float: left;
+    font-size: 12px;
+    margin: 0px 5px;
 }
 
 #incidents-by-year-step,
