@@ -1,0 +1,4 @@
+All the incident pages will be curl-ed here by fetch.sh. For each curl-ed page ${airline_name}-raw.html is saved here.
+
+Extract information from curl-ed pages by extract.py. Process all ${*}-raw.html to create one data file which is
+consumable.

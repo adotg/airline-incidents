@@ -1,0 +1,7 @@
+# Operating airlines in India. File ends with an empty line
+air-india
+jet-airways
+indigo
+goair
+airasia
+vistara
