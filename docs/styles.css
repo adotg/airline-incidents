@@ -1,0 +1,135 @@
+html, body{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+
+#airline-incidents{
+    width: calc(100% - 200px);
+    margin-left: 100px;
+    height: 100%;
+    font-weight: regular;
+}
+#airline-incidents h2, #airline-incidents h3{
+    margin: 0px;
+}
+.muze-title-container .muze-header-cell {
+    font-size: 20px;
+    font-weight: 700;
+    color: #5f5f5f;
+}
+
+.page-header{
+    width: 100%;
+    height: 8%;
+    margin-top: 10px;
+    font-size: 24px;
+    text-align: center
+}
+#incidents-breakup .muze-legend-title{
+    height: 0px !important;
+}
+
+#incidents-breakup .muze-legend-body{
+    overflow-y: none !important;
+}
+.component{
+    height: 10px;
+    width: 10px;
+    float: left;
+    margin-bottom: 50px;
+    background: #eee;
+    min-height: 200px;
+}
+
+.header{
+    color: #a7a7a7;
+    margin-left: 25px;
+    margin-top: 10px;
+    height: 40px;
+    width: calc(100% - 25px);
+    float: left;
+}
+.content{
+    margin: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 60px);
+    float: left;
+}
+
+#number-of-incidents{
+    height: 10%;
+    min-height: 130px;
+    width: 23%;
+}
+
+#number-of-incidents-content{
+    font-size: 44px;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#incidents-breakup{
+    height: 15%;
+    width: calc(77% - 25px);
+    min-height: 130px;
+    margin-left: 25px;
+    background: none;
+}
+
+#incidents-breakup-viz,
+#incidents-breakup-legend{
+    width: 100%;
+}
+#incidents-breakup-legend{
+    /* margin-top: 1px; */
+    font-size: 12px;
+}
+.incidents-legend{
+ float: left;
+ margin: 5px;
+}
+.legend-text{
+    float: left;
+}
+.legend-box{
+    float: left;
+    font-size: 12px;
+    margin: 0px 5px;
+}
+
+#incidents-by-year-step,
+#incidents-by-year-heatmap,
+#incidents-by-year-trellis{
+    width: 100%;
+}
+#incidents-by-year-step{
+   height: 35%;
+}
+#incidents-by-year-heatmap{
+    height: 40%;
+}
+#incidents-by-year-heatmap-content, #incidents-by-year-heatmap-header{
+    text-align: center;
+    display:flex;
+    align-items: center;
+    justify-content: center
+}
+
+#incidents-by-year-trellis{
+    height: 80%;
+}
+.incidents-trellis{
+    float: left;
+    margin-left: 25px;
+}
+
