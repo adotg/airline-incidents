@@ -144,6 +144,19 @@ html, body{
     display:flex;
     align-items: center;
     justify-content: center */
+    position: relative;
+}
+.back-button{
+    position: absolute;
+    background: #eee;
+    color: black;
+    border: 1px solid #414141;
+    border-radius: 3px;
+    top: -56px;
+    right: 0px;
+    display: none;
+    cursor: pointer;
+    padding: 5px 10px;
 }
 .sub-content{
     height: 100%;
@@ -152,10 +165,11 @@ html, body{
 }
 
 #incidents-by-year-heatmap-content-chart{
-    width: 60%;
+    width: 65%;
+    position: relative;
 }
 #incidents-by-year-heatmap-content-info-box{
-    width: 40%;
+    width: 35%;
 }
 .info-box{
     width: calc(100% - 30px);

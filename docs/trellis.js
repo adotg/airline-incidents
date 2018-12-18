@@ -210,18 +210,47 @@ const createTrellis = (datamodel, airlines) => {
           .getElementsByClassName("muze-ticks-x-0-0");
         for (var i = 0; i < ticks.length; i++) {
           ticks[i].style.cursor = "pointer";
-          ticks[i].addEventListener("mouseover", e => {
-            let dmNewDm = newDm.select(
+          ticks[i].addEventListener("click", e => {
+            const latestDm = newDm.select(
                 fields => new Date(fields.Date.value).getFullYear() == e.srcElement.innerHTML
               );
-              console.log(dmNewDm.getData().data);
+ 
+              const fieldConfigLatest = latestDm.getFieldsConfig();
+              const index = fieldConfigLatest["Date"].index;
+              const arr = latestDm.getData().data.map(e=>e[index]);
+              console.log(arr);
+              behaviours.forEach(behaviour => firebolt.dispatchBehaviour(behaviour, {
+                criteria: {
+                    Date: arr
+                }
+            }));
+             
           });
         }
+
+        // targetEl.on('click', function (data) {
+        //     // if (event.metaKey) {
+        //         const utils = muze.utils
+        //         const event = utils.getEvent();
+        //         const mousePos = utils.getClientPoint(this, event);
+        //         const interactionConfig = {
+        //             data,
+        //             getAllPoints: true
+        //         };
+        //         const nearestPoint = firebolt.context.getNearestPoint(mousePos.x, mousePos.y, 
+        //                   interactionConfig);
+        //                   console.log(nearestPoint)
+        //         behaviours.forEach(behaviour => firebolt.dispatchBehaviour(behaviour, {
+        //             criteria: nearestPoint.id
+        //         }));
+        //     // }
+        // });
+        
       }
     })
     .registerPhysicalBehaviouralMap({
       ctrlClick: {
-        behaviours: ["highlight"]
+        behaviours: ["select"]
       }
     });
 

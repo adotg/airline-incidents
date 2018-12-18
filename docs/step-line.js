@@ -121,7 +121,7 @@ createBar = dataModel => {
     .canvas()
     .data(dataModel)
     .columns(["Monthly Date"])
-    .rows(["incident-count"])
+    .rows(["Count of Incidents"])
     .layers([
       {
         mark: "bar",

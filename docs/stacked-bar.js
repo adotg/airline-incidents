@@ -1,15 +1,14 @@
 const createStackedBar = (datamodel, airlines) => {
 
 
-    const groupedDataModel = datamodel.sort([["incident-count"]]).groupBy(['Airline', 'c']);
+    const groupedDataModel = datamodel.sort([["Count of Incidents"]]).groupBy(['Airline', 'c']);
     const fieldConfig = groupedDataModel.getFieldsConfig();
-    const incCtIndex = fieldConfig['incident-count'].index;
+    const incCtIndex = fieldConfig['Count of Incidents'].index;
 
     let total = 0;
     const maxIncCt = groupedDataModel.getData().data.forEach(e=>{
        total+= e[incCtIndex]
     })
-    console.log(total)
     
   // Canvas for incident counts
   const canvas = muze()
@@ -18,7 +17,7 @@ const createStackedBar = (datamodel, airlines) => {
     .rows(["c"])
     .minUnitHeight(10)
     .height(100)
-    .columns([["incident-count"]])
+    .columns([["Count of Incidents"]])
     .color({
       field: "Airline",
       domain: Object.keys(colorsForAirlines),

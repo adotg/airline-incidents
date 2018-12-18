@@ -12,8 +12,18 @@ const getMaxValue = (datamodel, groupByfields, maxValField) => {
   return max;
 };
 
+
+
 const createHeatMap = datamodel => {
-  const max = getMaxValue(datamodel, ["Airline", "Year"], "incident-count");
+
+    const goBack = ()=>{
+        const backButton = document.getElementsByClassName("back-button");
+        for (var i = 0; i < backButton.length; i++) {
+          backButton[i].style.display =  'none';
+        }
+        createHeatMap(datamodel)
+    }
+  const max = getMaxValue(datamodel, ["Airline", "Year"], "Count of Incidents");
   // Canvas for the heat map airline vs year
   const canvas = muze()
     .canvas()
@@ -21,7 +31,7 @@ const createHeatMap = datamodel => {
     .rows(["Airline"])
     .columns(["Year"])
     .color({
-      field: "incident-count",
+      field: "Count of Incidents",
       range: ["#ea4335"],
       domain: [0, max]
     })
@@ -52,7 +62,7 @@ const createHeatMap = datamodel => {
               const airline = dataArray[fieldConfig["Airline"].index];
               const year = dataArray[fieldConfig["Year"].index];
               const incidentCount =
-                dataArray[fieldConfig["incident-count"].index];
+                dataArray[fieldConfig["Count of Incidents"].index];
               const incident = incidentCount > 1 ? "incidents" : "incident";
 
               backElem.style.background = colorsForAirlines[airline];
@@ -77,12 +87,20 @@ const createHeatMap = datamodel => {
     .registerPhysicalActions({
       /* to register the action */
       ctrlClick: firebolt => (targetEl, behaviours) => {
-        const ticks = document
-          .getElementById("incidents-by-year-heatmap-content-chart")
-          .getElementsByClassName("muze-ticks-x-0-0");
+        const content = document
+          .getElementById("incidents-by-year-heatmap-content-chart");
+          const ticks = content.getElementsByClassName("muze-ticks-x-0-0");
+          
+        
         for (var i = 0; i < ticks.length; i++) {
+            
           ticks[i].style.cursor = "pointer";
           ticks[i].addEventListener("click", e => {
+            const backButton = content.getElementsByClassName("back-button")
+            for (var i = 0; i < backButton.length; i++) {
+              backButton[i].style.display = canvas.columns()[0] === 'Year' ? 'block' : 'none';
+              backButton[i].addEventListener('click', e=> goBack());
+            }
             let newDm = datamodel.select(
               fields => fields.Year.value == e.srcElement.innerHTML
             );
@@ -104,20 +122,21 @@ const createHeatMap = datamodel => {
             const newMax = getMaxValue(
               newDm,
               ["Airline", "Months"],
-              "incident-count"
+              "Count of Incidents"
             );
             canvas
               .data(newDm)
               .columns(["Months"])
               .color({
-                field: "incident-count",
+                field: "Count of Incidents",
                 range: ["#ea4335"],
                 domain: [0, newMax]
               })
               .config({
                 axes: {
                   x: {
-                    domain: months
+                    domain: months,
+                    name: `Months of Year: ${e.srcElement.innerHTML}`
                   }
                 }
               });

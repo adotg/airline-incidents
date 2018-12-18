@@ -70,7 +70,7 @@ const buildData = originalData => {
   // Create a variable to create pseudo axis
   sdm = sdm.calculateVariable(
     {
-      name: "incident-count",
+      name: "Count of Incidents",
       type: "measure",
       defAggFn: "sum"
     },
@@ -86,11 +86,11 @@ const buildData = originalData => {
 //   let incidentDmMonthly = calcCumulative(sdm, "Monthly Date", "Number of Incidents");
 
   let airlineDM = sdm.groupBy(["Airline"], {
-    "incident-count": "count"
+    "Count of Incidents": "count"
   });
 
   // Getting list of airlines
-  const airlines = airlineDM.sort([["incident-count", "desc"]]).getData().data;
+  const airlines = airlineDM.sort([["Count of Incidents", "desc"]]).getData().data;
 
   allAirlines = airlines.map(e=>e[0])
 
