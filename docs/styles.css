@@ -147,8 +147,15 @@ html, body{
 }
 .sub-content{
     height: 100%;
-    width: 50%;
+
     float: left;
+}
+
+#incidents-by-year-heatmap-content-chart{
+    width: 60%;
+}
+#incidents-by-year-heatmap-content-info-box{
+    width: 40%;
 }
 .info-box{
     width: calc(100% - 30px);

@@ -149,48 +149,6 @@ const createTrellis = (datamodel, airlines) => {
             source: "airbusA230DM",
             interactive: false
           },
-        //   {
-        //     mark: "tick",
-        //     name: "introAirBusA320",
-        //     className: "introAirBusA320",
-        //     encoding: {
-        //       y: { field: null },
-        //       x: "Date",
-        //       color: { value: () => "#080808" }
-        //     },
-        //     calculateDomain: false,
-        //     source: "airbusA230DMN",
-        //     interactive: false
-        //   },
-        //   {
-        //     mark: "text",
-        //     name: "introAirBusA320Text",
-        //     className: "introAirBusA320Text",
-        //     encoding: {
-        //       y: { field: null },
-        //       text: {
-        //         field: "Date",
-        //         formatter: value => {
-        //           return `First Neo Incident \u2192`;
-        //         }
-        //       },
-        //       x: "Date",
-        //       color: { value: () => "#414141" }
-        //     },
-        //     encodingTransform: (points, layer, dependencies) => {
-        //       let height = layer.measurement().height;
-        //       let smartLabel = dependencies.smartLabel;
-        //       for (let i = 0; i < points.length; i++) {
-        //         let size = smartLabel.getOriSize(points[i].text);
-        //         points[i].update.y += height - 5;
-        //         points[i].update.x -= size.width / 2 + 1;
-        //       }
-        //       return points;
-        //     },
-        //     calculateDomain: false,
-        //     source: "airbusA230DMN",
-        //     interactive: false
-        //   }
         ]);
     }
     ActionModel.dissociateSideEffect(["highlighter", "select"])
@@ -242,6 +200,36 @@ const createTrellis = (datamodel, airlines) => {
     ActionModel.for(canvas).mapSideEffects({
       select: ["link-effect"]
     });
+
+
+    ActionModel.for(canvas)
+    .registerPhysicalActions({
+      /* to register the action */
+      ctrlClick: firebolt => (targetEl, behaviours) => {
+        const ticks =newElement
+          .getElementsByClassName("muze-ticks-x-0-0");
+        for (var i = 0; i < ticks.length; i++) {
+          ticks[i].style.cursor = "pointer";
+          ticks[i].addEventListener("mouseover", e => {
+            let dmNewDm = newDm.select(
+                fields => new Date(fields.Date.value).getFullYear() == e.srcElement.innerHTML
+              );
+              console.log(dmNewDm.getData().data);
+          });
+        }
+      }
+    })
+    .registerPhysicalBehaviouralMap({
+      ctrlClick: {
+        behaviours: ["highlight"]
+      }
+    });
+
+
+
+
+
+
 
     trellisCanvases.push(canvas);
   });

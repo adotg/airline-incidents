@@ -1,3 +1,5 @@
+const years = [];
+let allAirlines = [];
 
 const buildData = originalData => {
   const data = originalData
@@ -47,13 +49,23 @@ const buildData = originalData => {
 
   let sdm = dm.sort([["Date"]]);
 
+
+    const tempYears = []
   // Create a variable to create year data
   sdm = sdm.calculateVariable({ name: "Year", type: "dimension" }, [
     "Date",
     d => {
-      return new Date(d).getFullYear();
+      const year =  new Date(d).getFullYear();
+      if(tempYears.indexOf(year)===-1){
+        tempYears.push(year);
+      }
+      return year;
     }
   ]);
+
+  for(let x = tempYears[0]; x<=tempYears[tempYears.length-1]; x++){
+      years.push(x);
+  }
 
   // Create a variable to create pseudo axis
   sdm = sdm.calculateVariable(
@@ -79,6 +91,8 @@ const buildData = originalData => {
 
   // Getting list of airlines
   const airlines = airlineDM.sort([["incident-count", "desc"]]).getData().data;
+
+  allAirlines = airlines.map(e=>e[0])
 
   // DataModel for the heatmap
   airlineDM = airlineDM.calculateVariable({ name: "c", type: "dimension" }, [

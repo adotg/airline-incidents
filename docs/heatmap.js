@@ -1,33 +1,34 @@
+const getMaxValue = (datamodel, groupByfields, maxValField) => {
+  const groupedDataModel = datamodel.groupBy(groupByfields);
+  const fieldConfig = groupedDataModel.getFieldsConfig();
+  const incCtIndex = fieldConfig[maxValField].index;
+
+  let max = 0;
+  groupedDataModel.getData().data.forEach(e => {
+    if (max < e[incCtIndex]) {
+      max = e[incCtIndex];
+    }
+  });
+  return max;
+};
+
 const createHeatMap = datamodel => {
-
-    const groupedDataModel = datamodel.groupBy(['Airline', 'Year']);
-    const fieldConfig = groupedDataModel.getFieldsConfig();
-    const incCtIndex = fieldConfig['incident-count'].index;
-
-    let max = 0;
-    const maxIncCt = groupedDataModel.getData().data.forEach(e=>{
-        
-        if(max<e[incCtIndex]){
-            max = e[incCtIndex];
-        }
-    })
-    
+  const max = getMaxValue(datamodel, ["Airline", "Year"], "incident-count");
   // Canvas for the heat map airline vs year
   const canvas = muze()
     .canvas()
     .data(datamodel)
     .rows(["Airline"])
     .columns(["Year"])
-    .color({ 
-        field: "incident-count", 
-        range: ["#ea4335"],
-        domain: [0, max],
+    .color({
+      field: "incident-count",
+      range: ["#ea4335"],
+      domain: [0, max]
     })
-    .width((window.innerWidth - 200) / 2)
     .config({
       axes: {
-        x: { padding: 0 },
-        y: { padding: 0 }
+        x: { padding: 0, domain: years },
+        y: { padding: 0, domain: allAirlines }
       },
       interaction: {
         tooltip: {
@@ -50,14 +51,14 @@ const createHeatMap = datamodel => {
             tooltipData.forEach((dataArray, i) => {
               const airline = dataArray[fieldConfig["Airline"].index];
               const year = dataArray[fieldConfig["Year"].index];
-              const incidentCount = dataArray[fieldConfig["incident-count"].index];
+              const incidentCount =
+                dataArray[fieldConfig["incident-count"].index];
               const incident = incidentCount > 1 ? "incidents" : "incident";
 
               backElem.style.background = colorsForAirlines[airline];
               tooltipContent += `<div class = "tooltip-header">${jsUcfirst(
                 airline
               )}</div>${incidentCount} ${incident} in ${year}`;
-
             });
             return html`
                 ${tooltipContent}</div>
@@ -68,9 +69,65 @@ const createHeatMap = datamodel => {
     })
     .mount("#incidents-by-year-heatmap-content-chart");
 
-  ActionModel.for( canvas)
+  ActionModel.for(canvas)
     .dissociateSideEffect(["highlighter", "select"])
     .dissociateSideEffect(["tooltip", "brush,select"])
     .dissociateSideEffect(["highlighter", "brush"])
-    .dissociateSideEffect(["selectionBox", "brush"]);
+    .dissociateSideEffect(["selectionBox", "brush"])
+    .registerPhysicalActions({
+      /* to register the action */
+      ctrlClick: firebolt => (targetEl, behaviours) => {
+        const ticks = document
+          .getElementById("incidents-by-year-heatmap-content-chart")
+          .getElementsByClassName("muze-ticks-x-0-0");
+        for (var i = 0; i < ticks.length; i++) {
+          ticks[i].style.cursor = "pointer";
+          ticks[i].addEventListener("click", e => {
+            let newDm = datamodel.select(
+              fields => fields.Year.value == e.srcElement.innerHTML
+            );
+
+            newDm = newDm.calculateVariable(
+              {
+                name: "Months",
+                type: "dimension"
+              },
+              [
+                "Date",
+                dateVar => {
+                  const date = new Date(dateVar);
+                  return months[date.getMonth()];
+                }
+              ]
+            );
+
+            const newMax = getMaxValue(
+              newDm,
+              ["Airline", "Months"],
+              "incident-count"
+            );
+            canvas
+              .data(newDm)
+              .columns(["Months"])
+              .color({
+                field: "incident-count",
+                range: ["#ea4335"],
+                domain: [0, newMax]
+              })
+              .config({
+                axes: {
+                  x: {
+                    domain: months
+                  }
+                }
+              });
+          });
+        }
+      }
+    })
+    .registerPhysicalBehaviouralMap({
+      ctrlClick: {
+        behaviours: ["select"]
+      }
+    });
 };
