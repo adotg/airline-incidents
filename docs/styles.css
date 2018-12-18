@@ -62,13 +62,13 @@ html, body{
 }
 
 #number-of-incidents{
-    height: 10%;
+    height: 25%;
     min-height: 130px;
     width: 23%;
 }
 
 #number-of-incidents-content{
-    font-size: 44px;
+    font-size: 60px;
     font-weight: bold;
     margin-top: 0px;
     margin-left: 0px;
@@ -82,19 +82,23 @@ html, body{
 
 
 #incidents-breakup{
-    height: 15%;
+    height: 25%;
     width: calc(77% - 25px);
     min-height: 130px;
     margin-left: 25px;
-    background: none;
+
+}
+#number-of-incidents-breakup-content{
+    margin-top: -10px;
 }
 
 #incidents-breakup-viz,
 #incidents-breakup-legend{
     width: 100%;
 }
+
+
 #incidents-breakup-legend{
-    /* margin-top: 1px; */
     font-size: 12px;
 }
 .incidents-legend{
