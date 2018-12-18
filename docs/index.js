@@ -378,7 +378,7 @@ fetch("data.json").then(resp =>
         dates.push(new Date(j, 0, 1));
       }
       let newDm = trellisDM.select(fields => fields.Airline.value === e[0]);
-
+      
       const canvas = muze()
         .canvas()
         .data(newDm)
