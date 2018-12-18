@@ -122,14 +122,39 @@ html, body{
 #incidents-by-year-step{
    height: 40%;
 }
+#incidents-by-year-step h2{
+   float: left;
+}
+#dropdown-selector-stepline{
+    float: right;
+    border: none;
+    padding: 5px !important;
+    height: 30px;
+    border-radius: 1px;
+    border: 1px solid #414141;
+    background: #eee;
+}
+
+
 #incidents-by-year-heatmap{
-    height: 40%;
+    height: 45%;
 }
 #incidents-by-year-heatmap-content, #incidents-by-year-heatmap-header{
-    text-align: center;
+    /* text-align: center;
     display:flex;
     align-items: center;
-    justify-content: center
+    justify-content: center */
+}
+.sub-content{
+    height: 100%;
+    width: 50%;
+    float: left;
+}
+.info-box{
+    width: calc(100% - 30px);
+    height: calc(100% - 15px);
+    background: #eee;
+    margin: 0px 15px 15px 25px;
 }
 
 #incidents-by-year-trellis{
