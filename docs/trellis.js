@@ -150,9 +150,9 @@ const createTrellis = (datamodel, airlines) => {
                 newPoints[i].update = Object.assign({}, newPoints[i].update);
                 newPoints[i].update.y = x - 5;
                 if(i>0){
-                  newPoints[i].update.y += size.height + 5;
+                  newPoints[i].update.y += size.height + 3;
                 }
-                newPoints[i].update.x = y - size.width/4 -5;
+                newPoints[i].update.x = y - size.width/2 -5;
                 newPoints[i].text = split[i];
               }
              

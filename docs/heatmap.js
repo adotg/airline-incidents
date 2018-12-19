@@ -84,15 +84,7 @@ const createHeatMap = datamodel => {
           content.getElementsByClassName("muze-ticks-x-0-0");
 
           ticks[i].addEventListener("click", e => {
-            // const backButton = content.getElementsByClassName("back-button");
-            const backButton = content.getElementsByClassName(
-              "muze-axis-name-x-0-0"
-            );
-            for (var i = 0; i < backButton.length; i++) {
-              // backButton[i].style.display = canvas.columns()[0] === "Year" ? "block" : "none";
-              backButton[i].classList.add("backButton");
-              backButton[i].addEventListener("click", e => goBack());
-            }
+          
             let newDm = datamodel.select(
               fields => fields.Year.value == e.srcElement.innerHTML
             );
@@ -128,22 +120,24 @@ const createHeatMap = datamodel => {
                 axes: {
                   x: {
                     domain: months,
-                    name: `\u2191 Months of Year: ${e.srcElement.innerHTML}`
+                    name: `\u2190 Months of Year: ${e.srcElement.innerHTML}`
                   }
                 }
               });
 
             newCanvas.done().then(() => {
+              setTimeout(()=>{
               const backButton = content.getElementsByClassName(
                 "muze-axis-name-x-0-0"
               );
-              console.log(backButton)
+
               for (var i = 0; i < backButton.length; i++) {
-                // backButton[i].style.display = canvas.columns()[0] === "Year" ? "block" : "none";
-                backButton[i].classList.add("backButton");
+                backButton[i].style.display = "block"
+                backButton[i].classList.add("back-button");
                 backButton[i].addEventListener("click", e => goBack());
               }
-            });
+            }, 100);
+          })
           });
         }
 
