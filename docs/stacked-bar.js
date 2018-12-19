@@ -46,7 +46,7 @@ const createStackedBar = (datamodel, airlines) => {
           show: true,
           showAxisName: false,
           nice: false,
-          tickValues: [-1, total],
+          tickValues: [-0.5, total],
           setFixedBaseline: false,
           tickFormat: (val, i, allTicks) => {
             if (i === 0) {

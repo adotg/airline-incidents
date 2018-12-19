@@ -77,6 +77,11 @@ const createHeatMap = datamodel => {
 
         for (var i = 0; i < ticks.length; i++) {
           ticks[i].style.cursor = "pointer";
+
+          // content.getElementsByClassName("muze-axis-name-x-0-0");
+
+
+
           ticks[i].addEventListener("click", e => {
             const backButton = content.getElementsByClassName("back-button");
             for (var i = 0; i < backButton.length; i++) {
@@ -119,7 +124,7 @@ const createHeatMap = datamodel => {
                 axes: {
                   x: {
                     domain: months,
-                    name: `Months of Year: ${e.srcElement.innerHTML}`
+                    name: `\u2191 Months of Year: ${e.srcElement.innerHTML}`
                   }
                 }
               });

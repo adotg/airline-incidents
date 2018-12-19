@@ -1,17 +1,14 @@
-const infoBoxCreator = (data, innerHTML) => {
+const infoBoxCreator = (data, innerHTML, headerInfo) => {
   const infoBox = document.getElementById("incidents-by-year-step-info-box");
   infoBox.innerHTML = "";
   const infoBoxHeader = document.createElement("div");
-
   infoBoxHeader.setAttribute("class", "info-box-header");
-
+  infoBoxHeader.innerHTML = `${headerInfo}: `;
   infoBox.appendChild(infoBoxHeader);
 
   data.forEach(e => {
     const infoBoxElem = document.createElement("div");
-
     infoBoxElem.setAttribute("class", "info-box-elem");
-
     infoBoxElem.innerHTML = innerHTML(e);
     infoBox.appendChild(infoBoxElem);
   });
@@ -50,29 +47,21 @@ const registerListener = (canvas, datamodel, type) => {
             const newDataModel = datamodel
               .select(fields => {
                 const dateVar = new Date(fields.Date.value);
-
-                if (type === "monthly") {
                   return (
                     dateVar.getMonth() === currDateVar.getMonth() &&
                     dateVar.getFullYear() === currDateVar.getFullYear()
-                  );
-                } else {
-                  return fields.Date.value == id[1][0];
-                }
+                  ); 
               })
               .groupBy(["Airline"]);
 
             const infoFieldsConfig = newDataModel.getFieldsConfig();
             const airlineIndex = infoFieldsConfig.Airline.index;
-            const incIndex = infoFieldsConfig["Count of Incidents"].index;
+			const incIndex = infoFieldsConfig["Count of Incidents"].index;
+			const time =`${months[currDateVar.getMonth()]}, ${currDateVar.getFullYear()}`
+
 
             infoBoxCreator(newDataModel.getData().data, e => {
-              const time =
-                type === "monthly"
-                  ? `${
-                      months[currDateVar.getMonth()]
-                    }, ${currDateVar.getFullYear()}`
-                  : currDateVar;
+             
 
               let innerHTML = `<div class = 'back-elem' style='background: ${
                 colorsForAirlines[e[airlineIndex]]
@@ -85,14 +74,19 @@ const registerListener = (canvas, datamodel, type) => {
                 e[incIndex]
               } Incidents in  ${time}</div>`;
               return innerHTML;
-            });
+            }, time);
           } else {
             const airlineIndex = id[0].indexOf("Airline");
             const dateIndex = id[0].indexOf("Date");
             const detailsIndex = id[0].indexOf("Details");
-            let data = [];
+			let data = [];
+			let time  = '';
             id.forEach((e, i) => {
-              if (i > 0) data.push(e);
+              if (i > 0) {
+				  data.push(e);
+				  const currDateVar = new Date(e[dateIndex])
+				  time =`${currDateVar.getDate()} ${months[currDateVar.getMonth()]}, ${currDateVar.getFullYear()}`
+			  }
             });
             infoBoxCreator(data, e => {
               let innerHTML = `<div class = 'back-elem' style='background: ${
@@ -108,7 +102,7 @@ const registerListener = (canvas, datamodel, type) => {
               }</div>`;
 
               return innerHTML;
-            });
+            }, time);
           }
         });
       }
@@ -117,65 +111,72 @@ const registerListener = (canvas, datamodel, type) => {
       axisAndChartlick: {
         behaviours: ["highlight"]
       }
-    })
-    .registerSideEffects(
-      class StackLayer extends SpawnableSideEffect {
-        static formalName() {
-          return "stack-layer";
-        }
-
-        constructor(...params) {
-          super(...params);
-          const visualUnit = this.firebolt.context;
-          const xField = visualUnit.fields().x[0];
-          const yField = visualUnit.fields().y[0];
-          this._layers = [];
-          const encoding = {
-            x: "Monthly Date",
-            y: { field: "Count of Incidents" },
-            color: {
-              field: "Airline"
-              // value: () => "#eee"
-            }
-          };
-          const barLayers = visualUnit.addLayer({
-            name: "stackLayer",
-            mark: "bar",
-            className: "muze-stackLayer",
-            calculateDomain: false,
-            encoding,
-            render: false,
-            transition: {
-              disabled: true
-            }
-          });
-
-          this._layers = [...barLayers];
-        }
-
-        apply(selectionSet) {
-          const interactionDm = selectionSet.mergedEnter.model;
-
-          const sideEffectGroup = this.drawingContext().sideEffectGroup;
-          const dynamicMarkGroup = this.createElement(
-            sideEffectGroup,
-            "g",
-            this._layers,
-            ".stack-layer"
-          );
-          dynamicMarkGroup.each(function(layer) {
-            layer.mount(this).data(interactionDm);
-          });
-
-          return this;
-        }
-      }
-    );
-
-  ActionModel.for(canvas).mapSideEffects({
-    highlight: ["stack-layer"]
-  });
+	})
+	
+	
 };
+
+
+const stackLayerMaker = (canvas)=>{
+
+    ActionModel.registerSideEffects(
+		class StackLayer extends SpawnableSideEffect {
+		  static formalName() {
+			return "stack-layer";
+		  }
+  
+		  constructor(...params) {
+			super(...params);
+			const visualUnit = this.firebolt.context;
+			const xField = visualUnit.fields().x[0];
+			const yField = visualUnit.fields().y[0];
+			this._layers = [];
+			const encoding = {
+			  x: "Monthly Date",
+			  y: { field: "Count of Incidents" },
+			  color: {
+				field: "Airline"
+				// value: () => "#eee"
+			  }
+			};
+			const barLayers = visualUnit.addLayer({
+			  name: "stackLayer",
+			  mark: "bar",
+			  className: "muze-stackLayer",
+			  calculateDomain: false,
+			  encoding,
+			  render: false,
+			  transition: {
+				disabled: true
+			  }
+			});
+  
+			this._layers = [...barLayers];
+		  }
+  
+		  apply(selectionSet) {
+			const interactionDm = selectionSet.mergedEnter.model;
+  
+			const sideEffectGroup = this.drawingContext().sideEffectGroup;
+			const dynamicMarkGroup = this.createElement(
+			  sideEffectGroup,
+			  "g",
+			  this._layers,
+			  ".stack-layer"
+			);
+			dynamicMarkGroup.each(function(layer) {
+			  layer.mount(this).data(interactionDm);
+			});
+  
+			return this;
+		  }
+		}
+	  );
+  
+	ActionModel.for(canvas).mapSideEffects({
+	  highlight: ["stack-layer"]
+	});
+}
 
 const createStepLineAndBar = (
   monthlyDataModel,
@@ -243,8 +244,8 @@ createStepLine = (dataModel, numberOfIncidents) => {
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
             let size = smartLabel.getOriSize(points[i].text);
-            points[i].update.y += size.height + 5;
-            points[i].update.x += size.width / 2 + 1;
+            points[i].update.y +=  0;
+            points[i].update.x += size.width / 2 + 10;
           }
           return points;
         }
@@ -265,8 +266,8 @@ createStepLine = (dataModel, numberOfIncidents) => {
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
             let size = smartLabel.getOriSize(points[i].text);
-            points[i].update.y += size.height * 2 + 5;
-            points[i].update.x += size.width / 2 + 1;
+            points[i].update.y += size.height  ;
+            points[i].update.x += size.width / 2 + 10;
           }
           return points;
         }
@@ -292,7 +293,7 @@ createStepLine = (dataModel, numberOfIncidents) => {
       axes: {
         y: { name: "Number of Incidents" },
         x: {
-          domain: ["2008", "2020"],
+          domain: ["2009", "2020"],
           tickFormat: genericTickFormatDate
         }
       },
@@ -349,4 +350,5 @@ createBar = (dataModel, dailyDm) => {
     })
     .mount("#incidents-by-year-step-chart");
   registerListener(canvas, dailyDm, "monthly");
+  stackLayerMaker(canvas);
 };

@@ -131,7 +131,7 @@ const createTrellis = (datamodel, airlines) => {
               text: {
                 field: "Date",
                 formatter: value => {
-                  return `Introduction of AirBus A320 \u2192`;
+                  return `Introduction of, AirBus A320`;
                 }
               },
               x: "Date",
@@ -139,12 +139,24 @@ const createTrellis = (datamodel, airlines) => {
             },
             encodingTransform: (points, layer, dependencies) => {
               let smartLabel = dependencies.smartLabel;
-              for (let i = 0; i < points.length; i++) {
-                let size = smartLabel.getOriSize(points[i].text);
-                points[i].update.y += size.height + 5;
-                points[i].update.x -= size.width / 2 + 1;
+              const point1 = Object.assign({}, points[0])
+              const point2 = Object.assign({}, points[0])
+              const newPoints = [point1, point2];
+              const split = newPoints[0].text.split(",");
+
+              for (let i = 0; i < newPoints.length; i++) {
+                let size = smartLabel.getOriSize(newPoints[i].text);
+                const { x, y } = newPoints[i].update;
+                newPoints[i].update = Object.assign({}, newPoints[i].update);
+                newPoints[i].update.y = x - 5;
+                if(i>0){
+                  newPoints[i].update.y += size.height + 5;
+                }
+                newPoints[i].update.x = y - size.width/4 -5;
+                newPoints[i].text = split[i];
               }
-              return points;
+              console.log(newPoints)
+              return newPoints;
             },
             calculateDomain: false,
             source: "airbusA230DM",
@@ -157,6 +169,13 @@ const createTrellis = (datamodel, airlines) => {
       .registerPhysicalActions({
         /* to register the action */
         ctrlClick: firebolt => (targetEl, behaviours) => {
+          targetEl.on("click", () => {
+            behaviours.forEach(behaviour =>
+              firebolt.dispatchBehaviour(behaviour, {
+                criteria: null
+              })
+            );
+          });
           const ticks = newElement.getElementsByClassName("muze-ticks-x-0-0");
           for (var i = 0; i < ticks.length; i++) {
             ticks[i].style.cursor = "pointer";
@@ -229,6 +248,9 @@ const createTrellis = (datamodel, airlines) => {
               render: false,
               axis: {
                 x: "Date"
+              },
+              transition: {
+                disabled: true
               }
             });
             const encoding2 = {
@@ -236,7 +258,11 @@ const createTrellis = (datamodel, airlines) => {
               y: { field: null },
               text: {
                 field: "allIncidents",
-                formatter: val => `Number of Incidents : ${val}`
+                formatter: val => {
+                  const splitVal = val.split(",");
+
+                  return `Number of Incidents ${splitVal[1]}: ${splitVal[0]}`;
+                }
               },
               color: {
                 value: () => "#eee"
@@ -264,14 +290,13 @@ const createTrellis = (datamodel, airlines) => {
                   } else {
                     point.update.x -= size.width / 2;
                   }
-                  point.update.y = height - 10;
+                  point.update.y =   10;
                 });
                 return points;
               }
             });
 
             this._layers = [...barLayers, ...textLayers];
-           
           }
 
           static formalName() {
@@ -279,17 +304,20 @@ const createTrellis = (datamodel, airlines) => {
           }
 
           apply(selectionSet, payload) {
-
             const selectedDataModel = selectionSet.mergedEnter.model;
             const totalData = selectedDataModel.groupBy([""]);
 
-            const jsonData = [
-              {
-                startDate: `Jan-1-${payload.Year}`,
-                endDate: `Dec-31-${payload.Year}`,
-                allIncidents: totalData.getData().data[0][0]
-              }
-            ];
+            const jsonData = totalData.getData().data.length
+              ? [
+                  {
+                    startDate: `Jan-1-${payload.Year}`,
+                    endDate: `Dec-31-${payload.Year}`,
+                    allIncidents: `${totalData.getData().data[0][0]}, ${
+                      payload.Year
+                    }`
+                  }
+                ]
+              : [];
             const schema = [
               {
                 name: "startDate",
@@ -305,7 +333,7 @@ const createTrellis = (datamodel, airlines) => {
               },
               {
                 name: "allIncidents",
-                type: "measure"
+                type: "dimension"
               }
             ];
             const interactionDm = new DataModel(jsonData, schema);

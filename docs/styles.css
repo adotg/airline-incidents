@@ -162,8 +162,19 @@ body {
   height: 50px;
   width: 100%;
   margin-bottom: 10px;
-  background: #eee;
+
   float: left;
+}
+
+#incidents-by-year-step-info-box .info-box-header {
+    float: left;
+    font-size: 20px;
+    margin: 0px 10px;
+    height: 100%;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #incidents-by-year-step-chart {
@@ -203,11 +214,15 @@ body {
 #incidents-by-year-step .info-box-elem {
   height: 100%;
   padding: 0px 15px;
+  margin-right: 5px;
 
   position: relative;
 }
 .info-content {
   font-weight: 300;
+}
+.airBusA320NText text {
+    transform: rotate(-90deg);
 }
 #heatmap-info-box {
   width: calc(100% - 30px);
@@ -295,9 +310,17 @@ body {
   color: -webkit-link;
   cursor: pointer;
   text-decoration: underline;
-  fill: rgb(0, 0, 238);
+  fill: #4eadf8;
 }
 
+#empty-info{
+    border-bottom: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 24px !important;
+}
 
 .contribution-layer rect {
     fill-opacity: 0.3;
