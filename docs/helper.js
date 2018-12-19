@@ -2,6 +2,7 @@ const DataModel = muze.DataModel;
 const html = muze.Operators.html;
 const ActionModel = muze.ActionModel;
 const SpawnableSideEffect = muze.SideEffects.standards.SpawnableSideEffect;
+const GenericBehaviour = muze.Behaviours.standards.GenericBehaviour
 
 const cumulativeCalculationAirlineDate = dm => {
   let currDate = "";
@@ -38,6 +39,13 @@ const cumulativeCalculationAirlineDate = dm => {
     ]
   );
 };
+
+const genericTickFormatDate= (v)=>{
+  const val = new Date(v).getFullYear();
+  if(val <'2009' || val>'2018'){
+    return '';
+  } return val
+}
 
 const getDisplayDateFromMilliSeconds = (dateVar)=>{
     const date = new Date(dateVar);

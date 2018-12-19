@@ -28,6 +28,7 @@ const createTrellis = (datamodel, airlines) => {
         axes: {
           x: {
             tickValues: dates,
+            tickFormat: genericTickFormatDate,
             domain: [dates[0], dates[dates.length - 1]]
           },
           y: { name: "No. of Incidents", domain: [0, 60] }
@@ -184,9 +185,24 @@ const createTrellis = (datamodel, airlines) => {
       })
       .registerPhysicalBehaviouralMap({
         ctrlClick: {
-          behaviours: ["select"]
+          behaviours: ["singleSelect"]
         }
       })
+      .registerBehaviouralActions([
+        class SingleSelectBehaviour extends GenericBehaviour {
+          static formalName() {
+            return "singleSelect";
+          }
+          setSelectionSet(addSet, selectionSet) {
+            if (addSet === null || !addSet.length) {
+              selectionSet.reset();
+            } else {
+              selectionSet.reset();
+              selectionSet.add(addSet);
+            }
+          }
+        }
+      ])
 
       .registerSideEffects(
         class BandCreator extends SpawnableSideEffect {
@@ -215,40 +231,47 @@ const createTrellis = (datamodel, airlines) => {
                 x: "Date"
               }
             });
+            const encoding2 = {
+              x: "startDate",
+              y: { field: null },
+              text: {
+                field: "allIncidents",
+                formatter: val => `Number of Incidents : ${val}`
+              },
+              color: {
+                value: () => "#eee"
+              }
+            };
+            const textLayers = visualUnit.addLayer({
+              name: "contributionLayerText",
+              mark: "text",
+              className: "muze-contributionLayer-text",
+              calculateDomain: false,
+              encoding: encoding2,
+              render: false,
+              axis: {
+                x: "Date"
+              },
+              encodingTransform: (points, layerInst, dependencies) => {
+                const { height, width } = layerInst.measurement();
 
-            this._layers = [...barLayers];
-            //     , ...visualUnit.addLayer({
-            //     name: 'label',
-            //     mark: 'text',
-            //     className: 'textLayer',
-            //     encoding: {
-            //         x: xField.getMembers()[0],
-            //         y: yField.getMembers()[0],
-            //         color: {
-            //             value: () => '#fff'
-            //         },
-            //         text: xField.getMembers()[0]
-            //     },
-            //     encodingTransform: require('layers', ['barLayer', (barLayer) => {
-            //         return (points, layerInst) => {
-            //             const fieldsConfig = layerInst.data().getFieldsConfig();
-            //             const yField = layerInst.config().encoding.y.field;
-            //             const xField = layerInst.config().encoding.x.field;
-            //             const xFieldIndex = fieldsConfig[xField].index;
-            //             const yFieldIndex = fieldsConfig[yField].index;
-            //             const barData = barLayer.data().getData().data;
-            //             const sourceYFieldIndex = barLayer.data().getFieldsConfig()[yField].index;
-            //             const sourceXFieldIndex = barLayer.data().getFieldsConfig()[xField].index;
-            //             points.forEach((point) => {
-            //                 const source = point.source;
-            //                 const totalValue = barData.find(d => d[sourceYFieldIndex] === source[yFieldIndex])[sourceXFieldIndex];
-            //                 point.text = `${((point.source[xFieldIndex] / totalValue) * 100).toFixed(2)}%`;
-            //                 point.update.x += 3;
-            //             });
-            //             return points;
-            //         }
-            //     }])
-            // })];
+                let smartLabel = dependencies.smartLabel;
+
+                points.forEach(point => {
+                  let size = smartLabel.getOriSize(point.text);
+                  if (point.update.x < size.width) {
+                    point.update.x += size.width / 2 + 25;
+                  } else {
+                    point.update.x -= size.width / 2;
+                  }
+                  point.update.y = height - 10;
+                });
+                return points;
+              }
+            });
+
+            this._layers = [...barLayers, ...textLayers];
+           
           }
 
           static formalName() {
@@ -256,10 +279,15 @@ const createTrellis = (datamodel, airlines) => {
           }
 
           apply(selectionSet, payload) {
+
+            const selectedDataModel = selectionSet.mergedEnter.model;
+            const totalData = selectedDataModel.groupBy([""]);
+
             const jsonData = [
               {
                 startDate: `Jan-1-${payload.Year}`,
-                endDate: `Dec-31-${payload.Year}`
+                endDate: `Dec-31-${payload.Year}`,
+                allIncidents: totalData.getData().data[0][0]
               }
             ];
             const schema = [
@@ -274,6 +302,10 @@ const createTrellis = (datamodel, airlines) => {
                 type: "dimension",
                 subtype: "temporal",
                 format: "%b-%e-%Y"
+              },
+              {
+                name: "allIncidents",
+                type: "measure"
               }
             ];
             const interactionDm = new DataModel(jsonData, schema);
@@ -286,17 +318,31 @@ const createTrellis = (datamodel, airlines) => {
               ".contribution-layer"
             );
             dynamicMarkGroup.each(function(layer) {
-         
               layer.mount(this).data(interactionDm);
             });
           }
         }
       )
       .mapSideEffects({
-        select: ["band-creator"]
+        singleSelect: ["band-creator"]
       });
-
+    ActionModel.for(canvas)
+      // .dissociateSideEffect(["tooltip", "highlight"])
+      .dissociateSideEffect(["crossline", "highlight"])
+      .dissociateSideEffect(["highlighter", "highlight"])
+      .dissociateSideEffect(["highlighter", "brush"])
+      .dissociateSideEffect(["selectionBox", "brush"])
+      .dissociateSideEffect(["highlighter", "select"])
+      .dissociateSideEffect(["tooltip", "brush,select"])
+      .dissociateSideEffect(["persistent-anchors", "select"]);
     trellisCanvases.push(canvas);
   });
-  muze.ActionModel.for(...trellisCanvases).enableCrossInteractivity();
+
+  muze.ActionModel.for(...trellisCanvases).enableCrossInteractivity({
+    sideEffects: {
+      ["band-creator"]: (propPayload, context) => {
+        return propPayload.sourceCanvas === context.parentAlias();
+      }
+    }
+  });
 };

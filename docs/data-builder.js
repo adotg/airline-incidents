@@ -26,7 +26,7 @@ const buildData = originalData => {
     }
   ];
 
-  let dm = new DataModel(nData, schema);
+  let dm = new DataModel(nData, schema).sort([["Date"]]);;
 
   // Create a variable to create monthly data
   dm = dm.calculateVariable(
@@ -40,8 +40,9 @@ const buildData = originalData => {
       "Date",
       d => {
         const date = new Date(d);
+ 
         const month =
-          date.getMonth() < 10 ? `0${date.getMonth()}` : date.getMonth();
+          date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth();
         return `${month}-${date.getFullYear()}`;
       }
     ]

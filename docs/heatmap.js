@@ -202,7 +202,7 @@ const createHeatMap = datamodel => {
           /* Getting the html container of the drawing area */
 
           const htmlContainer = drawingContext.htmlContainer;
-          console.log(dataModel.getData().data);
+        
           return this;
         }
       }
