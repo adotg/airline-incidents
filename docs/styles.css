@@ -269,7 +269,7 @@ body {
 
 .info-link {
   margin-left: 10px;
-  float: left;
+  float: right;
   width: calc(100% - 85px);
   font-weight: 100;
 }

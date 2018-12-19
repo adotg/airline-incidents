@@ -186,6 +186,7 @@ const createHeatMap = datamodel => {
             let innerHTML = "";
             innerHTML += `<div class = "info-image">  <img src= "${img}"></div>`;
             innerHTML += `<div class = "info-header">${content[0]}</div>`;
+            innerHTML += `<div class = "info-link">${content[2]}</div>`;
             innerHTML += `<div class = "info-link"> Click <a target="_blank" href = "${fullDoc}">here</a> to get the full story</div>`;
 
             infoBoxElem.innerHTML = innerHTML;
