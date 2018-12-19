@@ -1,15 +1,14 @@
 const createStackedBar = (datamodel, airlines) => {
+  let total = 0;
+  const groupedDataModel = datamodel
+    .sort([["Count of Incidents"]])
+    .groupBy(["Airline", "c"]);
+  const fieldConfig = groupedDataModel.getFieldsConfig();
+  const incCtIndex = fieldConfig["Count of Incidents"].index;
+  groupedDataModel.getData().data.forEach(e => {
+    total += e[incCtIndex];
+  });
 
-
-    const groupedDataModel = datamodel.sort([["Count of Incidents"]]).groupBy(['Airline', 'c']);
-    const fieldConfig = groupedDataModel.getFieldsConfig();
-    const incCtIndex = fieldConfig['Count of Incidents'].index;
-
-    let total = 0;
-    const maxIncCt = groupedDataModel.getData().data.forEach(e=>{
-       total+= e[incCtIndex]
-    })
-    
   // Canvas for incident counts
   const canvas = muze()
     .canvas()
@@ -43,20 +42,20 @@ const createStackedBar = (datamodel, airlines) => {
       },
       axes: {
         y: { show: false, padding: 0.1 },
-        x: { 
-            show: true,
-            showAxisName: false,
-            nice: false,
-            tickValues: [-1, total],
-            setFixedBaseline: false,
-            tickFormat: (val, i, allTicks)=>{
-                if(i=== 0 ){
-                    return '0%'
-                } else if(i === allTicks.length-1){
-                    return `100%`
-                }
-                return ''
+        x: {
+          show: true,
+          showAxisName: false,
+          nice: false,
+          tickValues: [-1, total],
+          setFixedBaseline: false,
+          tickFormat: (val, i, allTicks) => {
+            if (i === 0) {
+              return "0%";
+            } else if (i === allTicks.length - 1) {
+              return `100%`;
             }
+            return "";
+          }
         }
       }
     })
@@ -86,5 +85,5 @@ const createStackedBar = (datamodel, airlines) => {
     .dissociateSideEffect(["highlighter", "brush"])
     .dissociateSideEffect(["selectionBox", "brush"])
     .dissociateSideEffect(["highlighter", "select"])
-    .dissociateSideEffect(["tooltip", "brush,select"])
+    .dissociateSideEffect(["tooltip", "brush,select"]);
 };

@@ -1,8 +1,5 @@
 const infoBoxCreator = (data, innerHTML) => {
-  debugger
-  const infoBox = document.getElementById(
-    "incidents-by-year-step-info-box"
-  );
+  const infoBox = document.getElementById("incidents-by-year-step-info-box");
   infoBox.innerHTML = "";
   const infoBoxHeader = document.createElement("div");
 
@@ -10,7 +7,7 @@ const infoBoxCreator = (data, innerHTML) => {
 
   infoBox.appendChild(infoBoxHeader);
 
- data.forEach(e => {
+  data.forEach(e => {
     const infoBoxElem = document.createElement("div");
 
     infoBoxElem.setAttribute("class", "info-box-elem");
@@ -71,50 +68,47 @@ const registerListener = (canvas, datamodel, type) => {
 
             infoBoxCreator(newDataModel.getData().data, e => {
               const time =
-                  type === "monthly"
-                    ? `${
-                        months[currDateVar.getMonth()]
-                      }, ${currDateVar.getFullYear()}`
-                    : currDateVar;
-  
-          
+                type === "monthly"
+                  ? `${
+                      months[currDateVar.getMonth()]
+                    }, ${currDateVar.getFullYear()}`
+                  : currDateVar;
+
               let innerHTML = `<div class = 'back-elem' style='background: ${
                 colorsForAirlines[e[airlineIndex]]
               }'></div>`;
-          
+
               innerHTML += `<div class = "info-header">${jsUcfirst(
                 e[airlineIndex]
               )}</div>`;
               innerHTML += `<div class = "info-content">${
-                    e[incIndex]
-                  } Incidents in  ${time}</div>`;
-                return innerHTML;
-            })
-
+                e[incIndex]
+              } Incidents in  ${time}</div>`;
+              return innerHTML;
+            });
           } else {
-            const airlineIndex = id[0].indexOf('Airline')
-            const dateIndex = id[0].indexOf('Date')
-            const detailsIndex = id[0].indexOf('Details')
-            let data =[];
-            id.forEach((e,i)=>{
-              if(i>0) data.push(e);
-            })
-            infoBoxCreator(data,  e => {
+            const airlineIndex = id[0].indexOf("Airline");
+            const dateIndex = id[0].indexOf("Date");
+            const detailsIndex = id[0].indexOf("Details");
+            let data = [];
+            id.forEach((e, i) => {
+              if (i > 0) data.push(e);
+            });
+            infoBoxCreator(data, e => {
               let innerHTML = `<div class = 'back-elem' style='background: ${
                 colorsForAirlines[e[airlineIndex]]
               }'></div>`;
-          
+
               innerHTML += `<div class = "info-header">${jsUcfirst(
                 e[airlineIndex]
               )}</div>`;
-              const details = JSON.parse(
-                e[detailsIndex]
-              );
-              innerHTML += `<div class = "info-content">${details.content[0]}</div>`;
-          
-                return innerHTML
-             
-            })
+              const details = JSON.parse(e[detailsIndex]);
+              innerHTML += `<div class = "info-content">${
+                details.content[0]
+              }</div>`;
+
+              return innerHTML;
+            });
           }
         });
       }
@@ -226,7 +220,7 @@ createStepLine = (dataModel, numberOfIncidents) => {
     .canvas()
     .data(dataModel)
     .columns(["Date"])
-    .detail(["Details", 'Airline'])
+    .detail(["Details", "Airline"])
     .rows(["Number of Incidents"])
     .layers([
       { mark: "line", interpolate: "stepAfter" },
