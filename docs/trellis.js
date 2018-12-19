@@ -155,7 +155,7 @@ const createTrellis = (datamodel, airlines) => {
                 newPoints[i].update.x = y - size.width/4 -5;
                 newPoints[i].text = split[i];
               }
-              console.log(newPoints)
+             
               return newPoints;
             },
             calculateDomain: false,
@@ -178,6 +178,11 @@ const createTrellis = (datamodel, airlines) => {
           });
           const ticks = newElement.getElementsByClassName("muze-ticks-x-0-0");
           for (var i = 0; i < ticks.length; i++) {
+      
+            if(dataYears.indexOf(+ticks[i].innerHTML)>-1){
+              ticks[i].classList.add("ticks-link");
+            }
+  
             ticks[i].style.cursor = "pointer";
             ticks[i].addEventListener("click", e => {
               const latestDm = newDm.select(

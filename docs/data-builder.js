@@ -1,4 +1,5 @@
 const years = [];
+let dataYears = [];
 let allAirlines = [];
 
 const buildData = originalData => {
@@ -67,6 +68,7 @@ const buildData = originalData => {
   for(let x = tempYears[0]; x<=tempYears[tempYears.length-1]; x++){
       years.push(x);
   }
+  dataYears = tempYears;
 
   // Create a variable to create pseudo axis
   sdm = sdm.calculateVariable(

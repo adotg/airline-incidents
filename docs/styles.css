@@ -4,7 +4,7 @@ body {
   height: 100%;
   margin: 0px;
   background-color: #f4f4f4;
-  font-family: Source Sans Pro, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: 'Fira Sans', sans-serif;
 }
 
 #airline-incidents {
@@ -305,13 +305,20 @@ body {
   font-weight: 400;
 }
 
-#incidents-by-year-heatmap .muze-ticks-x-0-0,
-#incidents-by-year-trellis .muze-ticks-x-0-0 {
+#incidents-by-year-heatmap .ticks-link,
+#incidents-by-year-trellis .ticks-link {
   color: -webkit-link;
   cursor: pointer;
   text-decoration: underline;
   fill: #4eadf8;
 }
+/* #incidents-by-year-heatmap .muze-ticks-x-0-0,
+#incidents-by-year-trellis .muze-ticks-x-0-0 {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+  fill: #4eadf8;
+} */
 
 #empty-info{
     border-bottom: none !important;

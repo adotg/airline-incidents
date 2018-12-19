@@ -77,16 +77,20 @@ const createHeatMap = datamodel => {
 
         for (var i = 0; i < ticks.length; i++) {
           ticks[i].style.cursor = "pointer";
+          if (dataYears.indexOf(+ticks[i].innerHTML) > -1) {
+            ticks[i].classList.add("ticks-link");
+          }
 
-          // content.getElementsByClassName("muze-axis-name-x-0-0");
-
-
+          content.getElementsByClassName("muze-ticks-x-0-0");
 
           ticks[i].addEventListener("click", e => {
-            const backButton = content.getElementsByClassName("back-button");
+            // const backButton = content.getElementsByClassName("back-button");
+            const backButton = content.getElementsByClassName(
+              "muze-axis-name-x-0-0"
+            );
             for (var i = 0; i < backButton.length; i++) {
-              backButton[i].style.display =
-                canvas.columns()[0] === "Year" ? "block" : "none";
+              // backButton[i].style.display = canvas.columns()[0] === "Year" ? "block" : "none";
+              backButton[i].classList.add("backButton");
               backButton[i].addEventListener("click", e => goBack());
             }
             let newDm = datamodel.select(
@@ -112,7 +116,7 @@ const createHeatMap = datamodel => {
               ["Airline", "Months"],
               "Count of Incidents"
             );
-            canvas
+            const newCanvas = canvas
               .data(newDm)
               .columns(["Months"])
               .color({
@@ -128,6 +132,18 @@ const createHeatMap = datamodel => {
                   }
                 }
               });
+
+            newCanvas.done().then(() => {
+              const backButton = content.getElementsByClassName(
+                "muze-axis-name-x-0-0"
+              );
+              console.log(backButton)
+              for (var i = 0; i < backButton.length; i++) {
+                // backButton[i].style.display = canvas.columns()[0] === "Year" ? "block" : "none";
+                backButton[i].classList.add("backButton");
+                backButton[i].addEventListener("click", e => goBack());
+              }
+            });
           });
         }
 
@@ -156,13 +172,15 @@ const createHeatMap = datamodel => {
             return fields.Airline.value === id[1][1] && dateChecker == id[1][0];
           });
           const infoBox = document.getElementById("heatmap-info-box");
-          infoBox.innerHTML = '';
+          infoBox.innerHTML = "";
           const infoFieldsConfig = newDataModel.getFieldsConfig();
           const detailIndex = infoFieldsConfig.Details.index;
           const infoBoxHeader = document.createElement("div");
 
           infoBoxHeader.setAttribute("class", "info-box-header");
-          infoBoxHeader.innerHTML = `Incidents by ${ jsUcfirst(id[1][1])} in ${id[1][0]} `;
+          infoBoxHeader.innerHTML = `Incidents by ${jsUcfirst(id[1][1])} in ${
+            id[1][0]
+          } `;
           infoBox.appendChild(infoBoxHeader);
 
           newDataModel.getData().data.forEach(e => {
@@ -207,7 +225,7 @@ const createHeatMap = datamodel => {
           /* Getting the html container of the drawing area */
 
           const htmlContainer = drawingContext.htmlContainer;
-        
+
           return this;
         }
       }
