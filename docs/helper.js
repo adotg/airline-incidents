@@ -135,3 +135,19 @@ const colorsForAirlines = {
   vistara: "#592b50",
   goair: "#1c5891"
 };
+
+
+const getMaxValue = (datamodel, groupByfields, maxValField) => {
+    const groupedDataModel = datamodel.groupBy(groupByfields);
+    const fieldConfig = groupedDataModel.getFieldsConfig();
+    const incCtIndex = fieldConfig[maxValField].index;
+  
+    let max = 0;
+    groupedDataModel.getData().data.forEach(e => {
+      if (max < e[incCtIndex]) {
+        max = e[incCtIndex];
+      }
+    });
+    return max;
+  };
+  

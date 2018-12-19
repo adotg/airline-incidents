@@ -1,28 +1,11 @@
-const getMaxValue = (datamodel, groupByfields, maxValField) => {
-  const groupedDataModel = datamodel.groupBy(groupByfields);
-  const fieldConfig = groupedDataModel.getFieldsConfig();
-  const incCtIndex = fieldConfig[maxValField].index;
-
-  let max = 0;
-  groupedDataModel.getData().data.forEach(e => {
-    if (max < e[incCtIndex]) {
-      max = e[incCtIndex];
-    }
-  });
-  return max;
-};
-
-
-
 const createHeatMap = datamodel => {
-
-    const goBack = ()=>{
-        const backButton = document.getElementsByClassName("back-button");
-        for (var i = 0; i < backButton.length; i++) {
-          backButton[i].style.display =  'none';
-        }
-        createHeatMap(datamodel)
+  const goBack = () => {
+    const backButton = document.getElementsByClassName("back-button");
+    for (var i = 0; i < backButton.length; i++) {
+      backButton[i].style.display = "none";
     }
+    createHeatMap(datamodel);
+  };
   const max = getMaxValue(datamodel, ["Airline", "Year"], "Count of Incidents");
   // Canvas for the heat map airline vs year
   const canvas = muze()
@@ -86,20 +69,20 @@ const createHeatMap = datamodel => {
     .dissociateSideEffect(["selectionBox", "brush"])
     .registerPhysicalActions({
       /* to register the action */
-      ctrlClick: firebolt => (targetEl, behaviours) => {
-        const content = document
-          .getElementById("incidents-by-year-heatmap-content-chart");
-          const ticks = content.getElementsByClassName("muze-ticks-x-0-0");
-          
-        
+      axisAndChartlick: firebolt => (targetEl, behaviours) => {
+        const content = document.getElementById(
+          "incidents-by-year-heatmap-content-chart"
+        );
+        const ticks = content.getElementsByClassName("muze-ticks-x-0-0");
+
         for (var i = 0; i < ticks.length; i++) {
-            
           ticks[i].style.cursor = "pointer";
           ticks[i].addEventListener("click", e => {
-            const backButton = content.getElementsByClassName("back-button")
+            const backButton = content.getElementsByClassName("back-button");
             for (var i = 0; i < backButton.length; i++) {
-              backButton[i].style.display = canvas.columns()[0] === 'Year' ? 'block' : 'none';
-              backButton[i].addEventListener('click', e=> goBack());
+              backButton[i].style.display =
+                canvas.columns()[0] === "Year" ? "block" : "none";
+              backButton[i].addEventListener("click", e => goBack());
             }
             let newDm = datamodel.select(
               fields => fields.Year.value == e.srcElement.innerHTML
@@ -142,11 +125,90 @@ const createHeatMap = datamodel => {
               });
           });
         }
+
+        // Info box
+        targetEl.on("click", function(data) {
+          const utils = muze.utils;
+          const event = utils.getEvent();
+          const mousePos = utils.getClientPoint(this, event);
+          const interactionConfig = {
+            data,
+            getAllPoints: false
+          };
+          const nearestPoint = firebolt.context.getNearestPoint(
+            mousePos.x,
+            mousePos.y,
+            interactionConfig
+          );
+          const { id } = nearestPoint;
+
+          const newDataModel = datamodel.select(fields => {
+            const dateVar = new Date(fields.Date.value);
+            const dateChecker =
+              canvas.columns()[0] === "Year"
+                ? dateVar.getFullYear()
+                : months[dateVar.getMonth()];
+            return fields.Airline.value === id[1][1] && dateChecker == id[1][0];
+          });
+          const infoBox = document.getElementById("heatmap-info-box");
+          infoBox.innerHTML = '';
+          const infoFieldsConfig = newDataModel.getFieldsConfig();
+          const detailIndex = infoFieldsConfig.Details.index;
+          const infoBoxHeader = document.createElement("div");
+
+          infoBoxHeader.setAttribute("class", "info-box-header");
+          infoBoxHeader.innerHTML = `Incidents by ${ jsUcfirst(id[1][1])} in ${id[1][0]} `;
+          infoBox.appendChild(infoBoxHeader);
+
+          newDataModel.getData().data.forEach(e => {
+            const infoBoxElem = document.createElement("div");
+
+            infoBoxElem.setAttribute("class", "info-box-elem");
+            const detailData = JSON.parse(e[detailIndex]);
+            const { fullDoc, img, content } = detailData;
+            let innerHTML = "";
+            innerHTML += `<div class = "info-image">  <img src= "${img}"></div>`;
+            innerHTML += `<div class = "info-header">${content[0]}</div>`;
+            innerHTML += `<div class = "info-link"> Click <a target="_blank" href = "${fullDoc}">here</a> to get the full story</div>`;
+
+            infoBoxElem.innerHTML = innerHTML;
+            infoBox.appendChild(infoBoxElem);
+          });
+        });
       }
     })
     .registerPhysicalBehaviouralMap({
-      ctrlClick: {
+      axisAndChartlick: {
         behaviours: ["select"]
       }
-    });
+    })
+    .registerSideEffects(
+      class InfoBoxSideEffect extends SpawnableSideEffect {
+        static formalName() {
+          return "info-box";
+        }
+
+        apply(selectionSet) {
+          /* Getting the datamodel */
+          const dataModel = selectionSet.entrySet[0].model;
+
+          /* Getting the Drawing Context */
+          const drawingContext = this.drawingContext();
+
+          /* Getting the side effect drawing area */
+
+          const sideEffectGroup = drawingContext.sideEffectGroup;
+
+          /* Getting the html container of the drawing area */
+
+          const htmlContainer = drawingContext.htmlContainer;
+          console.log(dataModel.getData().data);
+          return this;
+        }
+      }
+    );
+
+  ActionModel.for(canvas).mapSideEffects({
+    select: ["info-box"]
+  });
 };

@@ -171,11 +171,48 @@ html, body{
 #incidents-by-year-heatmap-content-info-box{
     width: 35%;
 }
+#incidents-by-year-heatmap .muze-layer-bar rect {
+    cursor: pointer;
+}
+
+.info-box-header {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 5px;
+}
 .info-box{
     width: calc(100% - 30px);
     height: calc(100% - 15px);
-    background: #eee;
-    margin: 0px 15px 15px 25px;
+    /* background: #eee; */
+    border-left: 1px solid #eee;
+    padding-left: 10px;
+    margin: 0px 10px 10px 5px;
+    overflow-y: scroll;
+}
+
+.info-image{
+    float: left;
+}
+
+.info-box-elem {
+    display: block;
+    float: left;
+    margin: 10px 5px;
+}
+
+.info-header {
+    margin-left: 10px;
+    float: left;
+    width: calc(100% - 85px);
+    font-weight: 600;
+}
+.info-link {
+    margin-left: 10px;
+    float: left;
+    width: calc(100% - 85px);
+    font-weight: 100;
 }
 
 #incidents-by-year-trellis{
@@ -206,4 +243,11 @@ html, body{
     font-size: 16px;
     margin: 0px;
     font-weight: 400;
+}
+
+#incidents-by-year-heatmap .muze-ticks-x-0-0, #incidents-by-year-trellis .muze-ticks-x-0-0 {
+color: -webkit-link;
+cursor: pointer;
+text-decoration: underline;
+fill: rgb(0,0,238);
 }

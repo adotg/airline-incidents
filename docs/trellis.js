@@ -96,7 +96,7 @@ const createTrellis = (datamodel, airlines) => {
             return dt.select(fields => {
               const airbusDetails = JSON.parse(fields.Details.value);
               if (
-                airbusDetails.content[0].substring(0, 11) === 'Indigo A20N' &&
+                airbusDetails.content[0].substring(0, 11) === "Indigo A20N" &&
                 !firstDate
               ) {
                 firstDate = true;
@@ -148,117 +148,153 @@ const createTrellis = (datamodel, airlines) => {
             calculateDomain: false,
             source: "airbusA230DM",
             interactive: false
-          },
+          }
         ]);
     }
-    ActionModel.dissociateSideEffect(["highlighter", "select"])
-      .dissociateSideEffect(["tooltip", "brush,select"])
-      .registerSideEffects(
-        class LinkSideEffect extends SpawnableSideEffect {
-          static formalName() {
-            return "link-effect";
-          }
-
-          apply(selectionSet) {
-            /* Getting the datamodel */
-            const dataModel = selectionSet.entrySet[0].model;
-
-            /* Getting the Drawing Context */
-            const drawingContext = this.drawingContext();
-
-            /* Getting the side effect drawing area */
-
-            const sideEffectGroup = drawingContext.sideEffectGroup;
-
-            /* Getting the html container of the drawing area */
-
-            const htmlContainer = drawingContext.htmlContainer;
-
-            //    const textGroups = this.createElement(drawingContext.htmlContainer, 'g', dataModel.getData().data, 'link-effect');
-            const textGroups = this.createElement(
-              drawingContext.htmlContainer,
-              "div",
-              dataModel.getData().data,
-              "link-effect"
-            );
-            textGroups.style("background", "#eee");
-            textGroups.style("position", "absolute");
-
-            /* createElement is a utility method for side effects */
-            textGroups.html(d => {
-              return `Click <a target="_blank" href = ${
-                JSON.parse(d[2]).fullDoc
-              }>here </a> to read the full story`;
-            });
-
-            textGroups.attr("y", "30");
-            return this;
-          }
-        }
-      );
-
-    ActionModel.for(canvas).mapSideEffects({
-      select: ["link-effect"]
-    });
-
 
     ActionModel.for(canvas)
-    .registerPhysicalActions({
-      /* to register the action */
-      ctrlClick: firebolt => (targetEl, behaviours) => {
-        const ticks =newElement
-          .getElementsByClassName("muze-ticks-x-0-0");
-        for (var i = 0; i < ticks.length; i++) {
-          ticks[i].style.cursor = "pointer";
-          ticks[i].addEventListener("click", e => {
-            const latestDm = newDm.select(
-                fields => new Date(fields.Date.value).getFullYear() == e.srcElement.innerHTML
+      .registerPhysicalActions({
+        /* to register the action */
+        ctrlClick: firebolt => (targetEl, behaviours) => {
+          const ticks = newElement.getElementsByClassName("muze-ticks-x-0-0");
+          for (var i = 0; i < ticks.length; i++) {
+            ticks[i].style.cursor = "pointer";
+            ticks[i].addEventListener("click", e => {
+              const latestDm = newDm.select(
+                fields =>
+                  new Date(fields.Date.value).getFullYear() ==
+                  e.srcElement.innerHTML
               );
- 
+
               const fieldConfigLatest = latestDm.getFieldsConfig();
               const index = fieldConfigLatest["Date"].index;
-              const arr = latestDm.getData().data.map(e=>e[index]);
-              console.log(arr);
-              behaviours.forEach(behaviour => firebolt.dispatchBehaviour(behaviour, {
-                criteria: {
+              const arr = latestDm.getData().data.map(e => e[index]);
+
+              behaviours.forEach(behaviour =>
+                firebolt.dispatchBehaviour(behaviour, {
+                  criteria: {
                     Date: arr
-                }
-            }));
-             
-          });
+                  },
+                  Year: e.srcElement.innerHTML
+                })
+              );
+            });
+          }
         }
+      })
+      .registerPhysicalBehaviouralMap({
+        ctrlClick: {
+          behaviours: ["select"]
+        }
+      })
 
-        // targetEl.on('click', function (data) {
-        //     // if (event.metaKey) {
-        //         const utils = muze.utils
-        //         const event = utils.getEvent();
-        //         const mousePos = utils.getClientPoint(this, event);
-        //         const interactionConfig = {
-        //             data,
-        //             getAllPoints: true
-        //         };
-        //         const nearestPoint = firebolt.context.getNearestPoint(mousePos.x, mousePos.y, 
-        //                   interactionConfig);
-        //                   console.log(nearestPoint)
-        //         behaviours.forEach(behaviour => firebolt.dispatchBehaviour(behaviour, {
-        //             criteria: nearestPoint.id
-        //         }));
-        //     // }
-        // });
-        
-      }
-    })
-    .registerPhysicalBehaviouralMap({
-      ctrlClick: {
-        behaviours: ["select"]
-      }
-    });
+      .registerSideEffects(
+        class BandCreator extends SpawnableSideEffect {
+          constructor(...params) {
+            super(...params);
+            const visualUnit = this.firebolt.context;
+            const xField = visualUnit.fields().x[0];
+            const yField = visualUnit.fields().y[0];
+            this._layers = [];
+            const encoding = {
+              x: "startDate",
+              x0: "endDate",
+              y: { field: null },
+              color: {
+                value: () => "#eee"
+              }
+            };
+            const barLayers = visualUnit.addLayer({
+              name: "contributionLayer",
+              mark: "bar",
+              className: "muze-contributionLayer",
+              calculateDomain: false,
+              encoding,
+              render: false,
+              axis: {
+                x: "Date"
+              }
+            });
 
+            this._layers = [...barLayers];
+            //     , ...visualUnit.addLayer({
+            //     name: 'label',
+            //     mark: 'text',
+            //     className: 'textLayer',
+            //     encoding: {
+            //         x: xField.getMembers()[0],
+            //         y: yField.getMembers()[0],
+            //         color: {
+            //             value: () => '#fff'
+            //         },
+            //         text: xField.getMembers()[0]
+            //     },
+            //     encodingTransform: require('layers', ['barLayer', (barLayer) => {
+            //         return (points, layerInst) => {
+            //             const fieldsConfig = layerInst.data().getFieldsConfig();
+            //             const yField = layerInst.config().encoding.y.field;
+            //             const xField = layerInst.config().encoding.x.field;
+            //             const xFieldIndex = fieldsConfig[xField].index;
+            //             const yFieldIndex = fieldsConfig[yField].index;
+            //             const barData = barLayer.data().getData().data;
+            //             const sourceYFieldIndex = barLayer.data().getFieldsConfig()[yField].index;
+            //             const sourceXFieldIndex = barLayer.data().getFieldsConfig()[xField].index;
+            //             points.forEach((point) => {
+            //                 const source = point.source;
+            //                 const totalValue = barData.find(d => d[sourceYFieldIndex] === source[yFieldIndex])[sourceXFieldIndex];
+            //                 point.text = `${((point.source[xFieldIndex] / totalValue) * 100).toFixed(2)}%`;
+            //                 point.update.x += 3;
+            //             });
+            //             return points;
+            //         }
+            //     }])
+            // })];
+          }
 
+          static formalName() {
+            return "band-creator";
+          }
 
+          apply(selectionSet, payload) {
+            const jsonData = [
+              {
+                startDate: `Jan-1-${payload.Year}`,
+                endDate: `Dec-31-${payload.Year}`
+              }
+            ];
+            const schema = [
+              {
+                name: "startDate",
+                type: "dimension",
+                subtype: "temporal",
+                format: "%b-%e-%Y"
+              },
+              {
+                name: "endDate",
+                type: "dimension",
+                subtype: "temporal",
+                format: "%b-%e-%Y"
+              }
+            ];
+            const interactionDm = new DataModel(jsonData, schema);
 
-
-
+            const sideEffectGroup = this.drawingContext().sideEffectGroup;
+            const dynamicMarkGroup = this.createElement(
+              sideEffectGroup,
+              "g",
+              this._layers,
+              ".contribution-layer"
+            );
+            dynamicMarkGroup.each(function(layer) {
+         
+              layer.mount(this).data(interactionDm);
+            });
+          }
+        }
+      )
+      .mapSideEffects({
+        select: ["band-creator"]
+      });
 
     trellisCanvases.push(canvas);
   });

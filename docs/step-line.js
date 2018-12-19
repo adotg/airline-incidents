@@ -1,4 +1,8 @@
-const createStepLineAndBar = (monthlyDataModel, datamodel, numberOfIncidents) => {
+const createStepLineAndBar = (
+  monthlyDataModel,
+  datamodel,
+  numberOfIncidents
+) => {
   const header = document.getElementById("incidents-by-year-step-header");
   const selection = document.createElement("select");
   selection.setAttribute("class", "dropdown-selector");
@@ -43,47 +47,49 @@ createStepLine = (dataModel, numberOfIncidents) => {
       { mark: "point", source: "lastPoint" },
       {
         mark: "text",
-        name: 'firstText',
+        name: "firstText",
         encoding: {
           text: {
             field: "Date",
-            formatter: (val)=>{
-                return `Date recorded till: ${getDisplayDateFromMilliSeconds(val)}`
+            formatter: val => {
+              return `Date recorded till: ${getDisplayDateFromMilliSeconds(
+                val
+              )}`;
             }
           }
         },
         source: "lastPoint",
         encodingTransform: (points, layer, dependencies) => {
-            let smartLabel = dependencies.smartLabel;
-            for (let i = 0; i < points.length; i++) {
-              let size = smartLabel.getOriSize(points[i].text);
-              points[i].update.y +=   size.height+ 5;
-              points[i].update.x += size.width / 2 + 1;
-            }
-            return points;
-          },
+          let smartLabel = dependencies.smartLabel;
+          for (let i = 0; i < points.length; i++) {
+            let size = smartLabel.getOriSize(points[i].text);
+            points[i].update.y += size.height + 5;
+            points[i].update.x += size.width / 2 + 1;
+          }
+          return points;
+        }
       },
       {
         mark: "text",
-        name: 'secondText',
+        name: "secondText",
         encoding: {
           text: {
             field: "Date",
-            formatter: (val)=>{
-                return `Total incident recorded: ${numberOfIncidents}`
+            formatter: val => {
+              return `Total incident recorded: ${numberOfIncidents}`;
             }
           }
         },
         source: "lastPoint",
         encodingTransform: (points, layer, dependencies) => {
-            let smartLabel = dependencies.smartLabel;
-            for (let i = 0; i < points.length; i++) {
-              let size = smartLabel.getOriSize(points[i].text);
-              points[i].update.y += size.height*2 + 5;
-              points[i].update.x += size.width / 2 + 1;
-            }
-            return points;
-          },
+          let smartLabel = dependencies.smartLabel;
+          for (let i = 0; i < points.length; i++) {
+            let size = smartLabel.getOriSize(points[i].text);
+            points[i].update.y += size.height * 2 + 5;
+            points[i].update.x += size.width / 2 + 1;
+          }
+          return points;
+        }
       }
     ])
     .transform({
