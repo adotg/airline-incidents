@@ -1,3 +1,46 @@
+const tooltipFormatterHeatMap = (dataModel, field, extraInfo = "") => {
+  const tooltipData = dataModel.getData().data;
+  const fieldConfig = dataModel.getFieldsConfig();
+  let elem = document
+    .getElementById("incidents-by-year-heatmap-content")
+    .getElementsByClassName("muze-tooltip-box");
+  elem = elem[elem.length - 1];
+
+  let backElem = elem.getElementsByClassName("background-elem");
+
+
+  if (!backElem.length) {
+    backElem = document.createElement("div");
+
+    backElem.style.position = "absolute";
+    backElem.setAttribute("id", "background-elem");
+    backElem.classList.add("background-elem");
+    backElem.style.top = "0";
+    backElem.style.left = "0";
+    backElem.style.width = "10px";
+    backElem.style.height = "100%";
+    elem.appendChild(backElem);
+  } else {
+    backElem = backElem[0];
+  }
+
+  let tooltipContent = "<div class = 'tooltip-mod'>";
+  tooltipData.forEach((dataArray, i) => {
+    const airline = dataArray[fieldConfig["Airline"].index];
+    const year = dataArray[fieldConfig[field].index];
+    const incidentCount = dataArray[fieldConfig["Count of Incidents"].index];
+    const incident = incidentCount > 1 ? "incidents" : "incident";
+
+    backElem.style.background = colorsForAirlines[airline];
+    tooltipContent += `<div class = "tooltip-header">${jsUcfirst(
+      airline
+    )}</div>${incidentCount} ${incident} in ${year}${extraInfo}`;
+  });
+  return html`
+        ${tooltipContent}</div>
+      `;
+};
+
 const createHeatMap = datamodel => {
   const goBack = () => {
     const backButton = document.getElementsByClassName("back-button");
@@ -7,6 +50,9 @@ const createHeatMap = datamodel => {
     createHeatMap(datamodel);
   };
   const max = getMaxValue(datamodel, ["Airline", "Year"], "Count of Incidents");
+  let field = 'Year';
+  let extraInfo = '';
+
   // Canvas for the heat map airline vs year
   const canvas = muze()
     .canvas()
@@ -26,36 +72,38 @@ const createHeatMap = datamodel => {
       interaction: {
         tooltip: {
           formatter: dataModel => {
-            const tooltipData = dataModel.getData().data;
-            const fieldConfig = dataModel.getFieldsConfig();
-            const elem = document
-              .getElementById("incidents-by-year-heatmap-content")
-              .getElementsByClassName("muze-tooltip-box")[0];
-            const backElem = document.createElement("div");
+            return tooltipFormatterHeatMap(dataModel, field, extraInfo);
+            // return tooltipFormatterHeatMap(dataModel, "Year");
+            // const tooltipData = dataModel.getData().data;
+            // const fieldConfig = dataModel.getFieldsConfig();
+            // const elem = document
+            //   .getElementById("incidents-by-year-heatmap-content")
+            //   .getElementsByClassName("muze-tooltip-box")[0];
+            // const backElem = document.createElement("div");
 
-            backElem.style.position = "absolute";
-            backElem.style.top = "0";
-            backElem.style.left = "0";
-            backElem.style.width = "10px";
-            backElem.style.height = "100%";
-            elem.appendChild(backElem);
+            // backElem.style.position = "absolute";
+            // backElem.style.top = "0";
+            // backElem.style.left = "0";
+            // backElem.style.width = "10px";
+            // backElem.style.height = "100%";
+            // elem.appendChild(backElem);
 
-            let tooltipContent = "<div class = 'tooltip-mod'>";
-            tooltipData.forEach((dataArray, i) => {
-              const airline = dataArray[fieldConfig["Airline"].index];
-              const year = dataArray[fieldConfig["Year"].index];
-              const incidentCount =
-                dataArray[fieldConfig["Count of Incidents"].index];
-              const incident = incidentCount > 1 ? "incidents" : "incident";
+            // let tooltipContent = "<div class = 'tooltip-mod'>";
+            // tooltipData.forEach((dataArray, i) => {
+            //   const airline = dataArray[fieldConfig["Airline"].index];
+            //   const year = dataArray[fieldConfig["Year"].index];
+            //   const incidentCount =
+            //     dataArray[fieldConfig["Count of Incidents"].index];
+            //   const incident = incidentCount > 1 ? "incidents" : "incident";
 
-              backElem.style.background = colorsForAirlines[airline];
-              tooltipContent += `<div class = "tooltip-header">${jsUcfirst(
-                airline
-              )}</div>${incidentCount} ${incident} in ${year}`;
-            });
-            return html`
-                ${tooltipContent}</div>
-              `;
+            //   backElem.style.background = colorsForAirlines[airline];
+            //   tooltipContent += `<div class = "tooltip-header">${jsUcfirst(
+            //     airline
+            //   )}</div>${incidentCount} ${incident} in ${year}`;
+            // });
+            // return html`
+            //     ${tooltipContent}</div>
+            //   `;
           }
         }
       }
@@ -84,7 +132,6 @@ const createHeatMap = datamodel => {
           content.getElementsByClassName("muze-ticks-x-0-0");
 
           ticks[i].addEventListener("click", e => {
-          
             let newDm = datamodel.select(
               fields => fields.Year.value == e.srcElement.innerHTML
             );
@@ -108,36 +155,39 @@ const createHeatMap = datamodel => {
               ["Airline", "Months"],
               "Count of Incidents"
             );
+              field = "Months";
+              extraInfo = `,${e.srcElement.innerHTML}`;
+            canvas.config({
+              axes: {
+                x: {
+                  domain: months,
+                  name: `\u2190 Months of Year: ${e.srcElement.innerHTML}`,
+                }
+              }
+            });
             const newCanvas = canvas
               .data(newDm)
+
               .columns(["Months"])
               .color({
                 field: "Count of Incidents",
                 range: ["#ea4335"],
                 domain: [0, newMax]
-              })
-              .config({
-                axes: {
-                  x: {
-                    domain: months,
-                    name: `\u2190 Months of Year: ${e.srcElement.innerHTML}`
-                  }
-                }
               });
 
             newCanvas.done().then(() => {
-              setTimeout(()=>{
-              const backButton = content.getElementsByClassName(
-                "muze-axis-name-x-0-0"
-              );
+              setTimeout(() => {
+                const backButton = content.getElementsByClassName(
+                  "muze-axis-name-x-0-0"
+                );
 
-              for (var i = 0; i < backButton.length; i++) {
-                backButton[i].style.display = "block"
-                backButton[i].classList.add("back-button");
-                backButton[i].addEventListener("click", e => goBack());
-              }
-            }, 100);
-          })
+                for (var i = 0; i < backButton.length; i++) {
+                  backButton[i].style.display = "block";
+                  backButton[i].classList.add("back-button");
+                  backButton[i].addEventListener("click", e => goBack());
+                }
+              }, 100);
+            });
           });
         }
 
