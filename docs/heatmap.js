@@ -228,6 +228,7 @@ const createHeatMap = datamodel => {
 
         apply(selectionSet, payload) {
           const id = payload.criteria;
+          if(id){
           const newDataModel = datamodel.select(fields => {
             const dateVar = new Date(fields.Date.value);
             const dateChecker =
@@ -235,7 +236,7 @@ const createHeatMap = datamodel => {
                 ? dateVar.getFullYear()
                 : months[dateVar.getMonth()];
             return fields.Airline.value === id[1][1] && dateChecker == id[1][0];
-          });
+          }, {saveChild: false});
           const infoBox = document.getElementById("heatmap-info-box");
           infoBox.innerHTML = "";
           const infoFieldsConfig = newDataModel.getFieldsConfig();
@@ -247,7 +248,7 @@ const createHeatMap = datamodel => {
             id[1][0]
           } `;
           infoBox.appendChild(infoBoxHeader);
-
+          document.getElementById('clear-button').style.display = 'block';
           newDataModel.getData().data.forEach(e => {
             const infoBoxElem = document.createElement("div");
 
@@ -263,11 +264,16 @@ const createHeatMap = datamodel => {
             infoBoxElem.innerHTML = innerHTML;
             infoBox.appendChild(infoBoxElem);
           });
+        }
           return this;
         }
       }
     );
-
+    document.getElementById('clear-button').addEventListener('click', ()=>{
+      const infoBox = document.getElementById("heatmap-info-box");
+      infoBox.innerHTML = '<div class = "info-box-link" id = "empty-info">Click on the HeatMap to get a detailed view </div>';
+      document.getElementById('clear-button').style.display = 'none'
+    })
   ActionModel.for(canvas).mapSideEffects({
     singleSelect: ["info-box"]
   });

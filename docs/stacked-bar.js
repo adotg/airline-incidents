@@ -62,6 +62,7 @@ const createStackedBar = (datamodel, airlines) => {
     .mount("#incidents-breakup-viz");
 
   const parentLegendDiv = document.getElementById("incidents-breakup-legend");
+  parentLegendDiv.innerHTML = '';
   const legendElem = document.createElement("div");
 
   airlines.forEach((e, i) => {

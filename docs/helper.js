@@ -136,7 +136,7 @@ function jsUcfirst(string) {
 }
 
 const colorsForAirlines = {
-  indigo: "#001197",
+  indigo: "#3090ca",
   "jet-airways": "#f6e291",
   "air-india": "#f3a737",
   airasia: "#f11a12",

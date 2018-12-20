@@ -3,32 +3,29 @@ const createTrellis = (datamodel, airlines) => {
   const parentDiv = document.getElementById(
     "incidents-by-year-trellis-content"
   );
-
-  let trellisChartDim = {width: 0, height: 0}
-  if(screen.width < 480){
+  parentDiv.innerHTML = "";
+  let trellisChartDim = { width: 0, height: 0 };
+  if (screen.width < 480) {
     trellisChartDim.width = "calc(100% - 10px)";
     trellisChartDim.height = "250px";
-    parentDiv.style.height = "1500px"
-  } else if(screen.width <1080){
+    parentDiv.style.height = "1500px";
+  } else if (screen.width < 1080) {
     trellisChartDim.width = "calc(50% - 30px)";
     trellisChartDim.height = "250px";
-    parentDiv.style.height = "750px"
+    parentDiv.style.height = "750px";
   } else {
     trellisChartDim.width = "calc(33.33% - 25px)";
     trellisChartDim.height = "250px";
-    parentDiv.style.height = "500px"
+    parentDiv.style.height = "500px";
   }
- 
+
   airlines.forEach((e, i) => {
-    
     const newElement = document.createElement("div");
     newElement.setAttribute("id", `incidents-${i}`);
     newElement.setAttribute("class", `incidents-trellis`);
-    newElement.style.width = trellisChartDim.width
-    newElement.style.height = trellisChartDim.height
+    newElement.style.width = trellisChartDim.width;
+    newElement.style.height = trellisChartDim.height;
 
- 
-  
     parentDiv.appendChild(newElement);
     const dates = [];
     for (let j = 2009; j <= 2019; j++) {
@@ -297,23 +294,54 @@ const createTrellis = (datamodel, airlines) => {
               axis: {
                 x: "Date"
               },
-              encodingTransform: (points, layerInst, dependencies) => {
+              
+              encodingTransform: muze.utils.require('layers', ['contributionLayer', (barLayer)=> (points, layerInst, dependencies) => {
                 const { height, width } = layerInst.measurement();
-
+                const barWidth = barLayer.measurement().width;
                 let smartLabel = dependencies.smartLabel;
-
-                points.forEach(point => {
-                  let size = smartLabel.getOriSize(point.text);
-                  if (point.update.x < size.width) {
-                    point.update.x += size.width / 2 + 25;
+               
+                const point1 = Object.assign({}, points[0]);
+                const point2 = Object.assign({}, points[0]);
+                const newPoints = [point1, point2];
+                const split = newPoints[0].text.split(",");
+                smartLabel.setStyle({
+                  fontSize: '12px',
+                  fontFamily: 'Source Sans Pro',
+                  fontWeight: 'normal'
+                })
+                const maxWidth = Math.max(smartLabel.getOriSize(split[0]).width, smartLabel.getOriSize(split[1]).width);
+     
+                for (let i = 0; i < newPoints.length; i++) {
+                  let size = smartLabel.getOriSize(newPoints[i].text);
+                  const { x, y } = newPoints[i].update;
+                  newPoints[i].update = Object.assign({}, newPoints[i].update);
+      
+                  if (newPoints[i].update.x < maxWidth) {
+                    newPoints[i].update.x += width/(years.length-1)  + maxWidth/2;
                   } else {
-                    point.update.x -= size.width / 2;
+                    newPoints[i].update.x -= maxWidth/2 + 5 ;
                   }
-                  point.update.y = 10;
-                });
-                return points;
+                  newPoints[i].update.y = 15;
+                  if(i>0){
+                    newPoints[i].update.y +=size.height;
+                  }
+                  newPoints[i].text = split[i];
+                }
+  
+                return newPoints;
+                // points.forEach(point => {
+                //   let size = smartLabel.getOriSize(point.text);
+                //   if (point.update.x < size.width) {
+                //     point.update.x += size.width / 2 + 25;
+                //   } else {
+                //     point.update.x -= size.width / 2;
+                //   }
+                //   point.update.y = 10;
+                // });
+                // return points;
               }
-            });
+            ])
+          }) 
 
             this._layers = [...barLayers, ...textLayers];
           }
@@ -327,17 +355,19 @@ const createTrellis = (datamodel, airlines) => {
               const selectedDataModel = selectionSet.mergedEnter.model;
               const totalData = selectedDataModel.groupBy([""]);
               const allIncidents = totalData.getData().data.length
-                ? `Number of Incidents ${payload.Year}: ${
+                ? `Number of Incidents in, ${payload.Year}: ${
                     totalData.getData().data[0][0]
                   }`
-                : `No incident recorded in ${payload.Year}`;
-              const jsonData = payload.Year ? [
-                {
-                  startDate: `Jan-1-${payload.Year}`,
-                  endDate: `Dec-31-${payload.Year}`,
-                  allIncidents
-                }
-              ] : [];
+                : `No incident recorded, in ${payload.Year}`;
+              const jsonData = payload.Year
+                ? [
+                    {
+                      startDate: `Jan-1-${payload.Year}`,
+                      endDate: `Dec-31-${payload.Year}`,
+                      allIncidents
+                    }
+                  ]
+                : [];
 
               const schema = [
                 {
@@ -387,5 +417,4 @@ const createTrellis = (datamodel, airlines) => {
       .dissociateSideEffect(["persistent-anchors", "select"]);
     trellisCanvases.push(canvas);
   });
-
 };

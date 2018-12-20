@@ -56,8 +56,12 @@
         padding-top: 5px;
  
     }
+    #empty-info{
+        font-size: 14px;
+    }
 
   }
+
 
   @media screen and (max-width: 768px) {
       .component{
@@ -149,7 +153,27 @@
     #heatmap-info-box .info-box-header {
  
         padding-top: 5px;
+        text-align: left;
  
     }
 
   }
+
+
+  @media screen and (max-width: 480px) {
+    h2{
+        font-size: 14px;
+    }
+    #heatmap-info-box .info-box-header {
+ 
+    font-size: 14px;
+ 
+    }
+    #clear-button{
+        font-size: 12px;
+    }
+  @media screen and (max-width: 375px) {
+    h2{
+        font-size: 13px;
+    }
+}

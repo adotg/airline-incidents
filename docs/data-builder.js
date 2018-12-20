@@ -43,7 +43,8 @@ const buildData = originalData => {
         const date = new Date(d);
  
         const month =
-          date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth();
+          date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth()+1;
+        
         return `${month}-${date.getFullYear()}`;
       }
     ]

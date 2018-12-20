@@ -23,97 +23,97 @@ const registerListener = (canvas, datamodel, type) => {
     .dissociateSideEffect(["highlighter", "select"])
     .dissociateSideEffect(["tooltip", "brush,select"])
     .registerSideEffects(
-		class InfoBoxSideEffect extends SpawnableSideEffect {
-		  static formalName() {
-			return "info-box";
-		  }
-  
-		  apply(selectionSet, payload) {
-		 
-			const id = payload.criteria;
-			if (id) {
-				if (type === "monthly") {
+      class InfoBoxSideEffect extends SpawnableSideEffect {
+        static formalName() {
+          return "info-box";
+        }
+
+        apply(selectionSet, payload) {
+		  const id = payload.criteria;
+		
+          if (id) {
+            if (type === "monthly") {
+              const currDateVar = new Date(id[1][0]);
+
+              const newDataModel = datamodel
+                .select(fields => {
+				  const dateVar = new Date(fields.Date.value);
 				
-				  const currDateVar = new Date(id[1][0]);
-	
-				  const newDataModel = datamodel
-					.select(fields => {
-					  const dateVar = new Date(fields.Date.value);
-					  return (
-						dateVar.getMonth() === currDateVar.getMonth() &&
-						dateVar.getFullYear() === currDateVar.getFullYear()
-					  );
-					})
-					.groupBy(["Airline"]);
-	
-				  const infoFieldsConfig = newDataModel.getFieldsConfig();
-				  const airlineIndex = infoFieldsConfig.Airline.index;
-				  const incIndex = infoFieldsConfig["Count of Incidents"].index;
-				  const time = `${
-					months[currDateVar.getMonth()]
-				  }, ${currDateVar.getFullYear()}`;
-				const dataSet = newDataModel.getData().data;
-				 dataSet.length &&  infoBoxCreator(
-					dataSet,
-					e => {
-					  let innerHTML = `<div class = 'back-elem' style='background: ${
-						colorsForAirlines[e[airlineIndex]]
-					  }'></div>`;
-	
-					  innerHTML += `<div class = "info-header">${jsUcfirst(
-						e[airlineIndex]
-					  )}</div>`;
-					  innerHTML += `<div class = "info-content">${
-						e[incIndex]
-					  } Incidents in  ${time}</div>`;
-					  return innerHTML;
-					},
-					time
-				  );
-				} else {
-				  const airlineIndex = id[0].indexOf("Airline");
-				  const dateIndex = id[0].indexOf("Date");
-				  const detailsIndex = id[0].indexOf("Details");
-				  let data = [];
-				  let time = "";
-				  id.forEach((e, i) => {
-					if (i > 0) {
-					  data.push(e);
-					  const currDateVar = new Date(e[dateIndex]);
-					  time = `${currDateVar.getDate()} ${
-						months[currDateVar.getMonth()]
-					  }, ${currDateVar.getFullYear()}`;
-					}
-				  });
-				  infoBoxCreator(
-					data,
-					e => {
-					  let innerHTML = `<div class = 'back-elem' style='background: ${
-						colorsForAirlines[e[airlineIndex]]
-					  }'></div>`;
-	
-					  innerHTML += `<div class = "info-header">${jsUcfirst(
-						e[airlineIndex]
-					  )}</div>`;
-					  const details = JSON.parse(e[detailsIndex]);
-					  innerHTML += `<div class = "info-content">${
-						details.content[0]
-					  }</div>`;
-	
-					  return innerHTML;
-					},
-					time
-				  );
-				}
-			  }
-	
-			return this;
-		  }
-		}
-	  )
-	  ActionModel.for(canvas).mapSideEffects({
-		highlight: ["info-box"]
-	  });
+                  return (
+                    dateVar.getMonth() === currDateVar.getMonth() &&
+                    dateVar.getFullYear() === currDateVar.getFullYear()
+                  );
+                }, {saveChild: false})
+                .groupBy(["Airline"]);
+              const infoFieldsConfig = newDataModel.getFieldsConfig();
+              const airlineIndex = infoFieldsConfig.Airline.index;
+              const incIndex = infoFieldsConfig["Count of Incidents"].index;
+              const time = `${
+                months[currDateVar.getMonth()]
+              }, ${currDateVar.getFullYear()}`;
+              const dataSet = newDataModel.getData().data;
+              dataSet.length &&
+                infoBoxCreator(
+                  dataSet,
+                  e => {
+                    let innerHTML = `<div class = 'back-elem' style='background: ${
+                      colorsForAirlines[e[airlineIndex]]
+                    }'></div>`;
+
+                    innerHTML += `<div class = "info-header">${jsUcfirst(
+                      e[airlineIndex]
+                    )}</div>`;
+                    innerHTML += `<div class = "info-content">${
+                      e[incIndex]
+                    } Incidents in  ${time}</div>`;
+                    return innerHTML;
+                  },
+                  time
+                );
+            } else {
+              const airlineIndex = id[0].indexOf("Airline");
+              const dateIndex = id[0].indexOf("Date");
+              const detailsIndex = id[0].indexOf("Details");
+              let data = [];
+              let time = "";
+              id.forEach((e, i) => {
+                if (i > 0) {
+                  data.push(e);
+                  const currDateVar = new Date(e[dateIndex]);
+                  time = `${currDateVar.getDate()} ${
+                    months[currDateVar.getMonth()]
+                  }, ${currDateVar.getFullYear()}`;
+                }
+              });
+              infoBoxCreator(
+                data,
+                e => {
+                  let innerHTML = `<div class = 'back-elem' style='background: ${
+                    colorsForAirlines[e[airlineIndex]]
+                  }'></div>`;
+
+                  innerHTML += `<div class = "info-header">${jsUcfirst(
+                    e[airlineIndex]
+                  )}</div>`;
+                  const details = JSON.parse(e[detailsIndex]);
+                  innerHTML += `<div class = "info-content">${
+                    details.content[0]
+                  }</div>`;
+
+                  return innerHTML;
+                },
+                time
+              );
+            }
+          }
+
+          return this;
+        }
+      }
+    );
+  ActionModel.for(canvas).mapSideEffects({
+    highlight: ["info-box"]
+  });
 };
 
 const stackLayerMaker = canvas => {
@@ -201,7 +201,7 @@ const createStepLineAndBar = (
   createBar(monthlyDataModel, datamodel);
 
   selection.addEventListener("change", e => {
-	infoBoxCreator([], '', '')
+    infoBoxCreator([], "", "");
     switch (selection.value) {
       case chartTypes[1]:
         createStepLine(datamodel, numberOfIncidents);
@@ -241,11 +241,17 @@ createStepLine = (dataModel, numberOfIncidents) => {
         source: "lastPoint",
 
         encodingTransform: (points, layer, dependencies) => {
+          const width = layer.measurement().width;
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
             let size = smartLabel.getOriSize(points[i].text);
+
+            if (points[i].update.x + size.width + size.width / 2 + 10 > width) {
+              points[i].update.x -= size.width / 2 + 10;
+            } else {
+              points[i].update.x += size.width / 2 + 10;
+            }
             points[i].update.y += 0;
-            points[i].update.x += size.width / 2 + 10;
           }
           return points;
         }
@@ -265,9 +271,14 @@ createStepLine = (dataModel, numberOfIncidents) => {
         encodingTransform: (points, layer, dependencies) => {
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
+            const width = layer.measurement().width;
             let size = smartLabel.getOriSize(points[i].text);
             points[i].update.y += size.height;
-            points[i].update.x += size.width / 2 + 10;
+            if (points[i].update.x + size.width + size.width / 2 + 10 > width) {
+              points[i].update.x -= size.width / 2 + 10;
+            } else {
+              points[i].update.x += size.width / 2 + 10;
+            }
           }
           return points;
         }
@@ -341,7 +352,7 @@ createBar = (dataModel, dailyDm) => {
       axes: {
         y: { name: "Number of Incidents" },
         x: {
-			padding: 0.2
+          padding: 0.2
           // tickFormat: genericTickFormatDate
         }
       },
@@ -353,10 +364,7 @@ createBar = (dataModel, dailyDm) => {
   registerListener(canvas, dailyDm, "monthly");
   stackLayerMaker(canvas);
 
-  
   ActionModel.for(canvas)
-//   .dissociateSideEffect(["tooltip", "highlight"])
-  .dissociateSideEffect(["crossline", "highlight"])
+    //   .dissociateSideEffect(["tooltip", "highlight"])
+    .dissociateSideEffect(["crossline", "highlight"]);
 };
-
-

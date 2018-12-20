@@ -24,8 +24,27 @@ fetch("data.json").then(resp =>
         createTrellis(trellisDM, airlines);
       }
       chartCreator();
-      // document.getElementById('number-of-incidents-header').innerHTML = screen.width;
-      // // window.addEventListener('resize', chartCreator)
+  //     const supportsOrientationChange = window.onorientationchange ;
+  //  const orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
+  //     // document.getElementById('number-of-incidents-header').innerHTML = screen.width;
+  //     window.addEventListener(supportsOrientationChange, chartCreator, false)
+
+//       var previousOrientation = window.orientation;
+//       const width = screen.width
+//       const height = screen.height
+// var checkOrientation = function(){
+//     if(window.orientation !== previousOrientation){
+//         previousOrientation = window.orientation;
+//         chartCreator()
+//         // orientation changed, do your magic here
+//     }
+// };
+
+window.addEventListener("resize", checkOrientation, false);
+window.addEventListener("orientationchange", checkOrientation, false);
+
+// (optional) Android doesn't always fire orientationChange on 180 degree turns
+setInterval(checkOrientation, 2000);
     
 
   })
