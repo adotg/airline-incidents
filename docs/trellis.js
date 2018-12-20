@@ -1,14 +1,34 @@
 const createTrellis = (datamodel, airlines) => {
   const trellisCanvases = [];
+  const parentDiv = document.getElementById(
+    "incidents-by-year-trellis-content"
+  );
+
+  let trellisChartDim = {width: 0, height: 0}
+  if(screen.width < 480){
+    trellisChartDim.width = "calc(100% - 10px)";
+    trellisChartDim.height = "250px";
+    parentDiv.style.height = "1500px"
+  } else if(screen.width <1080){
+    trellisChartDim.width = "calc(50% - 30px)";
+    trellisChartDim.height = "250px";
+    parentDiv.style.height = "750px"
+  } else {
+    trellisChartDim.width = "calc(33.33% - 25px)";
+    trellisChartDim.height = "250px";
+    parentDiv.style.height = "500px"
+  }
+ 
   airlines.forEach((e, i) => {
-    const parentDiv = document.getElementById(
-      "incidents-by-year-trellis-content"
-    );
+    
     const newElement = document.createElement("div");
     newElement.setAttribute("id", `incidents-${i}`);
     newElement.setAttribute("class", `incidents-trellis`);
-    newElement.style.width = "30%";
-    newElement.style.height = "50%";
+    newElement.style.width = trellisChartDim.width
+    newElement.style.height = trellisChartDim.height
+
+ 
+  
     parentDiv.appendChild(newElement);
     const dates = [];
     for (let j = 2009; j <= 2019; j++) {
@@ -139,8 +159,8 @@ const createTrellis = (datamodel, airlines) => {
             },
             encodingTransform: (points, layer, dependencies) => {
               let smartLabel = dependencies.smartLabel;
-              const point1 = Object.assign({}, points[0])
-              const point2 = Object.assign({}, points[0])
+              const point1 = Object.assign({}, points[0]);
+              const point2 = Object.assign({}, points[0]);
               const newPoints = [point1, point2];
               const split = newPoints[0].text.split(",");
 
@@ -149,13 +169,13 @@ const createTrellis = (datamodel, airlines) => {
                 const { x, y } = newPoints[i].update;
                 newPoints[i].update = Object.assign({}, newPoints[i].update);
                 newPoints[i].update.y = x - 5;
-                if(i>0){
+                if (i > 0) {
                   newPoints[i].update.y += size.height + 3;
                 }
-                newPoints[i].update.x = y - size.width/2 -5;
+                newPoints[i].update.x = y - size.width / 2 - 5;
                 newPoints[i].text = split[i];
               }
-             
+
               return newPoints;
             },
             calculateDomain: false,
@@ -178,11 +198,10 @@ const createTrellis = (datamodel, airlines) => {
           });
           const ticks = newElement.getElementsByClassName("muze-ticks-x-0-0");
           for (var i = 0; i < ticks.length; i++) {
-      
             // if(dataYears.indexOf(+ticks[i].innerHTML)>-1){
-              ticks[i].classList.add("ticks-link");
+            ticks[i].classList.add("ticks-link");
             // }
-  
+
             ticks[i].style.cursor = "pointer";
             ticks[i].addEventListener("click", e => {
               const latestDm = newDm.select(
@@ -262,12 +281,7 @@ const createTrellis = (datamodel, airlines) => {
               x: "startDate",
               y: { field: null },
               text: {
-                field: "allIncidents",
-                // formatter: val => {
-                //   const splitVal = val.split(",");
-
-                //   return `Number of Incidents ${splitVal[1]}: ${splitVal[0]}`;
-                // }
+                field: "allIncidents"
               },
               color: {
                 value: () => "#eee"
@@ -295,7 +309,7 @@ const createTrellis = (datamodel, airlines) => {
                   } else {
                     point.update.x -= size.width / 2;
                   }
-                  point.update.y =   10;
+                  point.update.y = 10;
                 });
                 return points;
               }
@@ -309,47 +323,53 @@ const createTrellis = (datamodel, airlines) => {
           }
 
           apply(selectionSet, payload) {
-            const selectedDataModel = selectionSet.mergedEnter.model;
-            const totalData = selectedDataModel.groupBy([""]);
-            const allIncidents = totalData.getData().data.length ? `Number of Incidents ${payload.Year}: ${totalData.getData().data[0][0]}`: `No incident recorded in ${payload.Year}`;
-            const jsonData =  [
-                  {
-                    startDate: `Jan-1-${payload.Year}`,
-                    endDate: `Dec-31-${payload.Year}`,
-                    allIncidents
-                  }
-                ]
-         
-            const schema = [
-              {
-                name: "startDate",
-                type: "dimension",
-                subtype: "temporal",
-                format: "%b-%e-%Y"
-              },
-              {
-                name: "endDate",
-                type: "dimension",
-                subtype: "temporal",
-                format: "%b-%e-%Y"
-              },
-              {
-                name: "allIncidents",
-                type: "dimension"
-              }
-            ];
-            const interactionDm = new DataModel(jsonData, schema);
+            if (payload.sourceCanvas === this.firebolt.context.parentAlias()) {
+              const selectedDataModel = selectionSet.mergedEnter.model;
+              const totalData = selectedDataModel.groupBy([""]);
+              const allIncidents = totalData.getData().data.length
+                ? `Number of Incidents ${payload.Year}: ${
+                    totalData.getData().data[0][0]
+                  }`
+                : `No incident recorded in ${payload.Year}`;
+              const jsonData = payload.Year ? [
+                {
+                  startDate: `Jan-1-${payload.Year}`,
+                  endDate: `Dec-31-${payload.Year}`,
+                  allIncidents
+                }
+              ] : [];
 
-            const sideEffectGroup = this.drawingContext().sideEffectGroup;
-            const dynamicMarkGroup = this.createElement(
-              sideEffectGroup,
-              "g",
-              this._layers,
-              ".contribution-layer"
-            );
-            dynamicMarkGroup.each(function(layer) {
-              layer.mount(this).data(interactionDm);
-            });
+              const schema = [
+                {
+                  name: "startDate",
+                  type: "dimension",
+                  subtype: "temporal",
+                  format: "%b-%e-%Y"
+                },
+                {
+                  name: "endDate",
+                  type: "dimension",
+                  subtype: "temporal",
+                  format: "%b-%e-%Y"
+                },
+                {
+                  name: "allIncidents",
+                  type: "dimension"
+                }
+              ];
+              const interactionDm = new DataModel(jsonData, schema);
+
+              const sideEffectGroup = this.drawingContext().sideEffectGroup;
+              const dynamicMarkGroup = this.createElement(
+                sideEffectGroup,
+                "g",
+                this._layers,
+                ".contribution-layer"
+              );
+              dynamicMarkGroup.each(function(layer) {
+                layer.mount(this).data(interactionDm);
+              });
+            }
           }
         }
       )
@@ -368,11 +388,4 @@ const createTrellis = (datamodel, airlines) => {
     trellisCanvases.push(canvas);
   });
 
-  muze.ActionModel.for(...trellisCanvases).enableCrossInteractivity({
-    sideEffects: {
-      ["band-creator"]: (propPayload, context) => {
-        return propPayload.sourceCanvas === context.parentAlias();
-      }
-    }
-  });
 };

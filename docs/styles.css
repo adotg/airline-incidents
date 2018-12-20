@@ -24,10 +24,11 @@ body {
 }
 
 .page-header {
-  width: 100%;
-  height: 8%;
-  margin-top: 10px;
-  font-size: 24px;
+    width: 100%;
+    height: fit-content;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 24px;
   text-align: center;
 }
 #incidents-breakup .muze-legend-title {
@@ -128,6 +129,7 @@ body {
 }
 #incidents-by-year-step {
   height: 50%;
+  min-height: 400px;
 }
 #incidents-by-year-step h2 {
   float: left;
@@ -168,9 +170,9 @@ body {
 
 #incidents-by-year-step-info-box {
   position: relative;
-  height: 70px;
+  height: 100px;
   width: 100%;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
     margin-left: 20px;
   float: left;
 }
@@ -190,7 +192,7 @@ body {
 
 #incidents-by-year-step-chart {
   width: 100%;
-  height: calc(100% - 85px);
+  height: calc(100% - 95px);
   float: left;
 }
 .back-button {
@@ -265,7 +267,7 @@ body {
 
 #heatmap-info-box .info-header {
   margin-left: 10px;
-  font-size: 16px;
+
   float: left;
   width: calc(100% - 85px);
   font-weight: 600;
@@ -275,21 +277,30 @@ body {
   margin: 0px;
   font-weight: 600;
 }
+div#incidents-by-year-step-info-box {
+    overflow-x: scroll;
+    /* overflow-y: hidden; */
+}
 
 .info-link {
   margin-left: 10px;
   float: right;
   width: calc(100% - 85px);
   font-weight: 100;
+  font-size: 14px;
 }
 
 #incidents-by-year-trellis {
-  height: 60%;
+  height:fit-content;
 }
 .incidents-trellis {
   float: left;
   margin-left: 25px;
+  width: 30%;
+  height: 50%;
 }
+
+
 
 .muze-tooltip-box,
 #incidents-by-year-heatmap .muze-tooltip-content-container,
@@ -321,13 +332,7 @@ body {
   text-decoration: underline;
   fill: #4eadf8;
 }
-/* #incidents-by-year-heatmap .muze-ticks-x-0-0,
-#incidents-by-year-trellis .muze-ticks-x-0-0 {
-  color: -webkit-link;
-  cursor: pointer;
-  text-decoration: underline;
-  fill: #4eadf8;
-} */
+
 
 #empty-info{
     border-bottom: none !important;

@@ -17,12 +17,17 @@ fetch("data.json").then(resp =>
     document.getElementById(
       "number-of-incidents-content"
     ).innerHTML = numberOfIncidents;
-
-    createStackedBar(airlineDM, airlines);
-    createStepLineAndBar(incidentDmMonthly, incidentDm, numberOfIncidents);
-    createHeatMap(sdm);
-    createTrellis(trellisDM, airlines);
+      const chartCreator = ()=>{
+        createStackedBar(airlineDM, airlines);
+        createStepLineAndBar(incidentDmMonthly, incidentDm, numberOfIncidents);
+        createHeatMap(sdm);
+        createTrellis(trellisDM, airlines);
+      }
+      chartCreator();
+      // document.getElementById('number-of-incidents-header').innerHTML = screen.width;
+      // // window.addEventListener('resize', chartCreator)
     
 
   })
 );
+

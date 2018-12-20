@@ -17,113 +17,103 @@ const infoBoxCreator = (data, innerHTML, headerInfo) => {
 const registerListener = (canvas, datamodel, type) => {
   ActionModel.for(canvas)
     .dissociateSideEffect(["tooltip", "highlight"])
-    // .dissociateSideEffect(["crossline", "highlight"])
     .dissociateSideEffect(["highlighter", "highlight"])
     .dissociateSideEffect(["highlighter", "brush"])
     .dissociateSideEffect(["selectionBox", "brush"])
     .dissociateSideEffect(["highlighter", "select"])
     .dissociateSideEffect(["tooltip", "brush,select"])
-    .registerPhysicalActions({
-      /* to register the action */
-      axisAndChartlick: firebolt => (targetEl, behaviours) => {
-        // Info box
-        targetEl.on("mouseover", function(data) {
-          const utils = muze.utils;
-          const event = utils.getEvent();
-          const mousePos = utils.getClientPoint(this, event);
-          const interactionConfig = {
-            data,
-            getAllPoints: false
-          };
-          const nearestPoint = firebolt.context.getNearestPoint(
-            mousePos.x,
-            mousePos.y,
-            interactionConfig
-          );
-          const { id } = nearestPoint;
-    
-          if (id) {
-            if (type === "monthly") {
-              const currDateVar = new Date(id[1][0]);
-
-              const newDataModel = datamodel
-                .select(fields => {
-                  const dateVar = new Date(fields.Date.value);
-                  return (
-                    dateVar.getMonth() === currDateVar.getMonth() &&
-                    dateVar.getFullYear() === currDateVar.getFullYear()
-                  );
-                })
-                .groupBy(["Airline"]);
-
-              const infoFieldsConfig = newDataModel.getFieldsConfig();
-              const airlineIndex = infoFieldsConfig.Airline.index;
-              const incIndex = infoFieldsConfig["Count of Incidents"].index;
-              const time = `${
-                months[currDateVar.getMonth()]
-              }, ${currDateVar.getFullYear()}`;
-			const dataSet = newDataModel.getData().data;
-             dataSet.length &&  infoBoxCreator(
-                dataSet,
-                e => {
-                  let innerHTML = `<div class = 'back-elem' style='background: ${
-                    colorsForAirlines[e[airlineIndex]]
-                  }'></div>`;
-
-                  innerHTML += `<div class = "info-header">${jsUcfirst(
-                    e[airlineIndex]
-                  )}</div>`;
-                  innerHTML += `<div class = "info-content">${
-                    e[incIndex]
-                  } Incidents in  ${time}</div>`;
-                  return innerHTML;
-                },
-                time
-              );
-            } else {
-              const airlineIndex = id[0].indexOf("Airline");
-              const dateIndex = id[0].indexOf("Date");
-              const detailsIndex = id[0].indexOf("Details");
-              let data = [];
-              let time = "";
-              id.forEach((e, i) => {
-                if (i > 0) {
-                  data.push(e);
-                  const currDateVar = new Date(e[dateIndex]);
-                  time = `${currDateVar.getDate()} ${
-                    months[currDateVar.getMonth()]
-                  }, ${currDateVar.getFullYear()}`;
-                }
-              });
-              infoBoxCreator(
-                data,
-                e => {
-                  let innerHTML = `<div class = 'back-elem' style='background: ${
-                    colorsForAirlines[e[airlineIndex]]
-                  }'></div>`;
-
-                  innerHTML += `<div class = "info-header">${jsUcfirst(
-                    e[airlineIndex]
-                  )}</div>`;
-                  const details = JSON.parse(e[detailsIndex]);
-                  innerHTML += `<div class = "info-content">${
-                    details.content[0]
-                  }</div>`;
-
-                  return innerHTML;
-                },
-                time
-              );
-            }
-          }
-        });
-      }
-    })
-    .registerPhysicalBehaviouralMap({
-      axisAndChartlick: {
-        behaviours: ["highlight"]
-      }
-    });
+    .registerSideEffects(
+		class InfoBoxSideEffect extends SpawnableSideEffect {
+		  static formalName() {
+			return "info-box";
+		  }
+  
+		  apply(selectionSet, payload) {
+		 
+			const id = payload.criteria;
+			if (id) {
+				if (type === "monthly") {
+				
+				  const currDateVar = new Date(id[1][0]);
+	
+				  const newDataModel = datamodel
+					.select(fields => {
+					  const dateVar = new Date(fields.Date.value);
+					  return (
+						dateVar.getMonth() === currDateVar.getMonth() &&
+						dateVar.getFullYear() === currDateVar.getFullYear()
+					  );
+					})
+					.groupBy(["Airline"]);
+	
+				  const infoFieldsConfig = newDataModel.getFieldsConfig();
+				  const airlineIndex = infoFieldsConfig.Airline.index;
+				  const incIndex = infoFieldsConfig["Count of Incidents"].index;
+				  const time = `${
+					months[currDateVar.getMonth()]
+				  }, ${currDateVar.getFullYear()}`;
+				const dataSet = newDataModel.getData().data;
+				 dataSet.length &&  infoBoxCreator(
+					dataSet,
+					e => {
+					  let innerHTML = `<div class = 'back-elem' style='background: ${
+						colorsForAirlines[e[airlineIndex]]
+					  }'></div>`;
+	
+					  innerHTML += `<div class = "info-header">${jsUcfirst(
+						e[airlineIndex]
+					  )}</div>`;
+					  innerHTML += `<div class = "info-content">${
+						e[incIndex]
+					  } Incidents in  ${time}</div>`;
+					  return innerHTML;
+					},
+					time
+				  );
+				} else {
+				  const airlineIndex = id[0].indexOf("Airline");
+				  const dateIndex = id[0].indexOf("Date");
+				  const detailsIndex = id[0].indexOf("Details");
+				  let data = [];
+				  let time = "";
+				  id.forEach((e, i) => {
+					if (i > 0) {
+					  data.push(e);
+					  const currDateVar = new Date(e[dateIndex]);
+					  time = `${currDateVar.getDate()} ${
+						months[currDateVar.getMonth()]
+					  }, ${currDateVar.getFullYear()}`;
+					}
+				  });
+				  infoBoxCreator(
+					data,
+					e => {
+					  let innerHTML = `<div class = 'back-elem' style='background: ${
+						colorsForAirlines[e[airlineIndex]]
+					  }'></div>`;
+	
+					  innerHTML += `<div class = "info-header">${jsUcfirst(
+						e[airlineIndex]
+					  )}</div>`;
+					  const details = JSON.parse(e[detailsIndex]);
+					  innerHTML += `<div class = "info-content">${
+						details.content[0]
+					  }</div>`;
+	
+					  return innerHTML;
+					},
+					time
+				  );
+				}
+			  }
+	
+			return this;
+		  }
+		}
+	  )
+	  ActionModel.for(canvas).mapSideEffects({
+		highlight: ["info-box"]
+	  });
 };
 
 const stackLayerMaker = canvas => {
@@ -351,6 +341,7 @@ createBar = (dataModel, dailyDm) => {
       axes: {
         y: { name: "Number of Incidents" },
         x: {
+			padding: 0.2
           // tickFormat: genericTickFormatDate
         }
       },
@@ -362,7 +353,10 @@ createBar = (dataModel, dailyDm) => {
   registerListener(canvas, dailyDm, "monthly");
   stackLayerMaker(canvas);
 
+  
   ActionModel.for(canvas)
 //   .dissociateSideEffect(["tooltip", "highlight"])
   .dissociateSideEffect(["crossline", "highlight"])
 };
+
+

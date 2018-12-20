@@ -8,7 +8,6 @@ const tooltipFormatterHeatMap = (dataModel, field, extraInfo = "") => {
 
   let backElem = elem.getElementsByClassName("background-elem");
 
-
   if (!backElem.length) {
     backElem = document.createElement("div");
 
@@ -50,8 +49,8 @@ const createHeatMap = datamodel => {
     createHeatMap(datamodel);
   };
   const max = getMaxValue(datamodel, ["Airline", "Year"], "Count of Incidents");
-  let field = 'Year';
-  let extraInfo = '';
+  let field = "Year";
+  let extraInfo = "";
 
   // Canvas for the heat map airline vs year
   const canvas = muze()
@@ -69,41 +68,17 @@ const createHeatMap = datamodel => {
         x: { padding: 0, domain: years },
         y: { padding: 0, domain: allAirlines }
       },
+      legend: {
+        color: {
+          title: {
+            text: "Incidents"
+          }
+        }
+      },
       interaction: {
         tooltip: {
           formatter: dataModel => {
             return tooltipFormatterHeatMap(dataModel, field, extraInfo);
-            // return tooltipFormatterHeatMap(dataModel, "Year");
-            // const tooltipData = dataModel.getData().data;
-            // const fieldConfig = dataModel.getFieldsConfig();
-            // const elem = document
-            //   .getElementById("incidents-by-year-heatmap-content")
-            //   .getElementsByClassName("muze-tooltip-box")[0];
-            // const backElem = document.createElement("div");
-
-            // backElem.style.position = "absolute";
-            // backElem.style.top = "0";
-            // backElem.style.left = "0";
-            // backElem.style.width = "10px";
-            // backElem.style.height = "100%";
-            // elem.appendChild(backElem);
-
-            // let tooltipContent = "<div class = 'tooltip-mod'>";
-            // tooltipData.forEach((dataArray, i) => {
-            //   const airline = dataArray[fieldConfig["Airline"].index];
-            //   const year = dataArray[fieldConfig["Year"].index];
-            //   const incidentCount =
-            //     dataArray[fieldConfig["Count of Incidents"].index];
-            //   const incident = incidentCount > 1 ? "incidents" : "incident";
-
-            //   backElem.style.background = colorsForAirlines[airline];
-            //   tooltipContent += `<div class = "tooltip-header">${jsUcfirst(
-            //     airline
-            //   )}</div>${incidentCount} ${incident} in ${year}`;
-            // });
-            // return html`
-            //     ${tooltipContent}</div>
-            //   `;
           }
         }
       }
@@ -155,13 +130,13 @@ const createHeatMap = datamodel => {
               ["Airline", "Months"],
               "Count of Incidents"
             );
-              field = "Months";
-              extraInfo = `,${e.srcElement.innerHTML}`;
+            field = "Months";
+            extraInfo = `,${e.srcElement.innerHTML}`;
             canvas.config({
               axes: {
                 x: {
                   domain: months,
-                  name: `\u2190 Months of Year: ${e.srcElement.innerHTML}`,
+                  name: `\u2190 Months of Year: ${e.srcElement.innerHTML}`
                 }
               }
             });
@@ -175,19 +150,26 @@ const createHeatMap = datamodel => {
                 domain: [0, newMax]
               });
 
-            newCanvas.done().then(() => {
-              setTimeout(() => {
-                const backButton = content.getElementsByClassName(
-                  "muze-axis-name-x-0-0"
-                );
+            ActionModel.for(newCanvas)
+              .registerPhysicalActions({
+                /* to register the action */
+                axisNameClick: firebolt => (targetEl, behaviours) => {
+                  const backButton = content.getElementsByClassName(
+                    "muze-axis-name-x-0-0"
+                  );
 
-                for (var i = 0; i < backButton.length; i++) {
-                  backButton[i].style.display = "block";
-                  backButton[i].classList.add("back-button");
-                  backButton[i].addEventListener("click", e => goBack());
+                  for (var i = 0; i < backButton.length; i++) {
+                    backButton[i].style.display = "block";
+                    backButton[i].classList.add("back-button");
+                    backButton[i].addEventListener("click", e => goBack());
+                  }
                 }
-              }, 100);
-            });
+              })
+              .registerPhysicalBehaviouralMap({
+                axisNameClick: {
+                  behaviours: ["singleSelect"]
+                }
+              });
           });
         }
 
@@ -206,7 +188,46 @@ const createHeatMap = datamodel => {
             interactionConfig
           );
           const { id } = nearestPoint;
+          behaviours.forEach(behaviour =>
+            firebolt.dispatchBehaviour(behaviour, {
+              criteria: id
+            })
+          );
+        });
+      }
+    })
+    .registerBehaviouralActions([
+      class SingleSelectBehaviour extends GenericBehaviour {
+        static formalName() {
+          return "singleSelect";
+        }
+        setSelectionSet(addSet, selectionSet) {
+          if (addSet === null || !addSet.length) {
+            selectionSet.reset();
+          } else {
+            selectionSet.reset();
+            selectionSet.add(addSet);
+          }
+        }
+      }
+    ])
+    .registerPhysicalBehaviouralMap({
+      axisAndChartlick: {
+        behaviours: ["singleSelect"]
+      },
+      longtouch: {
+        behaviours: ["singleSelect"]
+      }
+    })
 
+    .registerSideEffects(
+      class InfoBoxSideEffect extends SpawnableSideEffect {
+        static formalName() {
+          return "info-box";
+        }
+
+        apply(selectionSet, payload) {
+          const id = payload.criteria;
           const newDataModel = datamodel.select(fields => {
             const dateVar = new Date(fields.Date.value);
             const dateChecker =
@@ -242,41 +263,12 @@ const createHeatMap = datamodel => {
             infoBoxElem.innerHTML = innerHTML;
             infoBox.appendChild(infoBoxElem);
           });
-        });
-      }
-    })
-    .registerPhysicalBehaviouralMap({
-      axisAndChartlick: {
-        behaviours: ["select"]
-      }
-    })
-    .registerSideEffects(
-      class InfoBoxSideEffect extends SpawnableSideEffect {
-        static formalName() {
-          return "info-box";
-        }
-
-        apply(selectionSet) {
-          /* Getting the datamodel */
-          const dataModel = selectionSet.entrySet[0].model;
-
-          /* Getting the Drawing Context */
-          const drawingContext = this.drawingContext();
-
-          /* Getting the side effect drawing area */
-
-          const sideEffectGroup = drawingContext.sideEffectGroup;
-
-          /* Getting the html container of the drawing area */
-
-          const htmlContainer = drawingContext.htmlContainer;
-
           return this;
         }
       }
     );
 
   ActionModel.for(canvas).mapSideEffects({
-    select: ["info-box"]
+    singleSelect: ["info-box"]
   });
 };
