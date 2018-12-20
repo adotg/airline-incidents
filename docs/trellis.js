@@ -179,9 +179,9 @@ const createTrellis = (datamodel, airlines) => {
           const ticks = newElement.getElementsByClassName("muze-ticks-x-0-0");
           for (var i = 0; i < ticks.length; i++) {
       
-            if(dataYears.indexOf(+ticks[i].innerHTML)>-1){
+            // if(dataYears.indexOf(+ticks[i].innerHTML)>-1){
               ticks[i].classList.add("ticks-link");
-            }
+            // }
   
             ticks[i].style.cursor = "pointer";
             ticks[i].addEventListener("click", e => {
@@ -263,11 +263,11 @@ const createTrellis = (datamodel, airlines) => {
               y: { field: null },
               text: {
                 field: "allIncidents",
-                formatter: val => {
-                  const splitVal = val.split(",");
+                // formatter: val => {
+                //   const splitVal = val.split(",");
 
-                  return `Number of Incidents ${splitVal[1]}: ${splitVal[0]}`;
-                }
+                //   return `Number of Incidents ${splitVal[1]}: ${splitVal[0]}`;
+                // }
               },
               color: {
                 value: () => "#eee"
@@ -311,18 +311,15 @@ const createTrellis = (datamodel, airlines) => {
           apply(selectionSet, payload) {
             const selectedDataModel = selectionSet.mergedEnter.model;
             const totalData = selectedDataModel.groupBy([""]);
-
-            const jsonData = totalData.getData().data.length
-              ? [
+            const allIncidents = totalData.getData().data.length ? `Number of Incidents ${payload.Year}: ${totalData.getData().data[0][0]}`: `No incident recorded in ${payload.Year}`;
+            const jsonData =  [
                   {
                     startDate: `Jan-1-${payload.Year}`,
                     endDate: `Dec-31-${payload.Year}`,
-                    allIncidents: `${totalData.getData().data[0][0]}, ${
-                      payload.Year
-                    }`
+                    allIncidents
                   }
                 ]
-              : [];
+         
             const schema = [
               {
                 name: "startDate",

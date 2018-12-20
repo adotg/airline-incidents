@@ -3,7 +3,7 @@ const infoBoxCreator = (data, innerHTML, headerInfo) => {
   infoBox.innerHTML = "";
   const infoBoxHeader = document.createElement("div");
   infoBoxHeader.setAttribute("class", "info-box-header");
-  infoBoxHeader.innerHTML = `${headerInfo}: `;
+  infoBoxHeader.innerHTML = `${headerInfo} `;
   infoBox.appendChild(infoBoxHeader);
 
   data.forEach(e => {
@@ -17,7 +17,7 @@ const infoBoxCreator = (data, innerHTML, headerInfo) => {
 const registerListener = (canvas, datamodel, type) => {
   ActionModel.for(canvas)
     .dissociateSideEffect(["tooltip", "highlight"])
-    .dissociateSideEffect(["crossline", "highlight"])
+    // .dissociateSideEffect(["crossline", "highlight"])
     .dissociateSideEffect(["highlighter", "highlight"])
     .dissociateSideEffect(["highlighter", "brush"])
     .dissociateSideEffect(["selectionBox", "brush"])
@@ -188,7 +188,7 @@ const createStepLineAndBar = (
   selection.setAttribute("class", "dropdown-selector");
   selection.setAttribute("id", "dropdown-selector-stepline");
 
-  const chartTypes = ["Monthly Sum", "Cumulative"];
+  const chartTypes = ["By Month", "Daily Cumulative"];
   chartTypes.forEach(e => {
     const option = document.createElement("option");
     option.setAttribute("value", e);
@@ -225,7 +225,7 @@ createStepLine = (dataModel, numberOfIncidents) => {
     .rows(["Number of Incidents"])
     .layers([
       { mark: "line", interpolate: "stepAfter" },
-      { mark: "point", source: "lastPoint" },
+      { mark: "point", source: "lastPoint", 	className: 'lastPoint', },
       {
         mark: "text",
         name: "firstText",
@@ -239,7 +239,8 @@ createStepLine = (dataModel, numberOfIncidents) => {
             }
           }
         },
-        source: "lastPoint",
+		source: "lastPoint",
+	
         encodingTransform: (points, layer, dependencies) => {
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
