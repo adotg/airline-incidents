@@ -41,68 +41,80 @@ const registerListener = (canvas, datamodel, type) => {
             interactionConfig
           );
           const { id } = nearestPoint;
-          if (type === "monthly") {
-            const currDateVar = new Date(id[1][0]);
+    
+          if (id) {
+            if (type === "monthly") {
+              const currDateVar = new Date(id[1][0]);
 
-            const newDataModel = datamodel
-              .select(fields => {
-                const dateVar = new Date(fields.Date.value);
+              const newDataModel = datamodel
+                .select(fields => {
+                  const dateVar = new Date(fields.Date.value);
                   return (
                     dateVar.getMonth() === currDateVar.getMonth() &&
                     dateVar.getFullYear() === currDateVar.getFullYear()
-                  ); 
-              })
-              .groupBy(["Airline"]);
+                  );
+                })
+                .groupBy(["Airline"]);
 
-            const infoFieldsConfig = newDataModel.getFieldsConfig();
-            const airlineIndex = infoFieldsConfig.Airline.index;
-			const incIndex = infoFieldsConfig["Count of Incidents"].index;
-			const time =`${months[currDateVar.getMonth()]}, ${currDateVar.getFullYear()}`
+              const infoFieldsConfig = newDataModel.getFieldsConfig();
+              const airlineIndex = infoFieldsConfig.Airline.index;
+              const incIndex = infoFieldsConfig["Count of Incidents"].index;
+              const time = `${
+                months[currDateVar.getMonth()]
+              }, ${currDateVar.getFullYear()}`;
+			const dataSet = newDataModel.getData().data;
+             dataSet.length &&  infoBoxCreator(
+                dataSet,
+                e => {
+                  let innerHTML = `<div class = 'back-elem' style='background: ${
+                    colorsForAirlines[e[airlineIndex]]
+                  }'></div>`;
 
+                  innerHTML += `<div class = "info-header">${jsUcfirst(
+                    e[airlineIndex]
+                  )}</div>`;
+                  innerHTML += `<div class = "info-content">${
+                    e[incIndex]
+                  } Incidents in  ${time}</div>`;
+                  return innerHTML;
+                },
+                time
+              );
+            } else {
+              const airlineIndex = id[0].indexOf("Airline");
+              const dateIndex = id[0].indexOf("Date");
+              const detailsIndex = id[0].indexOf("Details");
+              let data = [];
+              let time = "";
+              id.forEach((e, i) => {
+                if (i > 0) {
+                  data.push(e);
+                  const currDateVar = new Date(e[dateIndex]);
+                  time = `${currDateVar.getDate()} ${
+                    months[currDateVar.getMonth()]
+                  }, ${currDateVar.getFullYear()}`;
+                }
+              });
+              infoBoxCreator(
+                data,
+                e => {
+                  let innerHTML = `<div class = 'back-elem' style='background: ${
+                    colorsForAirlines[e[airlineIndex]]
+                  }'></div>`;
 
-            infoBoxCreator(newDataModel.getData().data, e => {
-             
+                  innerHTML += `<div class = "info-header">${jsUcfirst(
+                    e[airlineIndex]
+                  )}</div>`;
+                  const details = JSON.parse(e[detailsIndex]);
+                  innerHTML += `<div class = "info-content">${
+                    details.content[0]
+                  }</div>`;
 
-              let innerHTML = `<div class = 'back-elem' style='background: ${
-                colorsForAirlines[e[airlineIndex]]
-              }'></div>`;
-
-              innerHTML += `<div class = "info-header">${jsUcfirst(
-                e[airlineIndex]
-              )}</div>`;
-              innerHTML += `<div class = "info-content">${
-                e[incIndex]
-              } Incidents in  ${time}</div>`;
-              return innerHTML;
-            }, time);
-          } else {
-            const airlineIndex = id[0].indexOf("Airline");
-            const dateIndex = id[0].indexOf("Date");
-            const detailsIndex = id[0].indexOf("Details");
-			let data = [];
-			let time  = '';
-            id.forEach((e, i) => {
-              if (i > 0) {
-				  data.push(e);
-				  const currDateVar = new Date(e[dateIndex])
-				  time =`${currDateVar.getDate()} ${months[currDateVar.getMonth()]}, ${currDateVar.getFullYear()}`
-			  }
-            });
-            infoBoxCreator(data, e => {
-              let innerHTML = `<div class = 'back-elem' style='background: ${
-                colorsForAirlines[e[airlineIndex]]
-              }'></div>`;
-
-              innerHTML += `<div class = "info-header">${jsUcfirst(
-                e[airlineIndex]
-              )}</div>`;
-              const details = JSON.parse(e[detailsIndex]);
-              innerHTML += `<div class = "info-content">${
-                details.content[0]
-              }</div>`;
-
-              return innerHTML;
-            }, time);
+                  return innerHTML;
+                },
+                time
+              );
+            }
           }
         });
       }
@@ -111,72 +123,68 @@ const registerListener = (canvas, datamodel, type) => {
       axisAndChartlick: {
         behaviours: ["highlight"]
       }
-	})
-	
-	
+    });
 };
 
+const stackLayerMaker = canvas => {
+  ActionModel.registerSideEffects(
+    class StackLayer extends SpawnableSideEffect {
+      static formalName() {
+        return "stack-layer";
+      }
 
-const stackLayerMaker = (canvas)=>{
+      constructor(...params) {
+        super(...params);
+        const visualUnit = this.firebolt.context;
+        const xField = visualUnit.fields().x[0];
+        const yField = visualUnit.fields().y[0];
+        this._layers = [];
+        const encoding = {
+          x: "Monthly Date",
+          y: { field: "Count of Incidents" },
+          color: {
+            field: "Airline"
+            // value: () => "#eee"
+          }
+        };
+        const barLayers = visualUnit.addLayer({
+          name: "stackLayer",
+          mark: "bar",
+          className: "muze-stackLayer",
+          calculateDomain: false,
+          encoding,
+          render: false,
+          transition: {
+            disabled: true
+          }
+        });
 
-    ActionModel.registerSideEffects(
-		class StackLayer extends SpawnableSideEffect {
-		  static formalName() {
-			return "stack-layer";
-		  }
-  
-		  constructor(...params) {
-			super(...params);
-			const visualUnit = this.firebolt.context;
-			const xField = visualUnit.fields().x[0];
-			const yField = visualUnit.fields().y[0];
-			this._layers = [];
-			const encoding = {
-			  x: "Monthly Date",
-			  y: { field: "Count of Incidents" },
-			  color: {
-				field: "Airline"
-				// value: () => "#eee"
-			  }
-			};
-			const barLayers = visualUnit.addLayer({
-			  name: "stackLayer",
-			  mark: "bar",
-			  className: "muze-stackLayer",
-			  calculateDomain: false,
-			  encoding,
-			  render: false,
-			  transition: {
-				disabled: true
-			  }
-			});
-  
-			this._layers = [...barLayers];
-		  }
-  
-		  apply(selectionSet) {
-			const interactionDm = selectionSet.mergedEnter.model;
-  
-			const sideEffectGroup = this.drawingContext().sideEffectGroup;
-			const dynamicMarkGroup = this.createElement(
-			  sideEffectGroup,
-			  "g",
-			  this._layers,
-			  ".stack-layer"
-			);
-			dynamicMarkGroup.each(function(layer) {
-			  layer.mount(this).data(interactionDm);
-			});
-  
-			return this;
-		  }
-		}
-	  );
-  
-	ActionModel.for(canvas).mapSideEffects({
-	  highlight: ["stack-layer"]
-	});
-}
+        this._layers = [...barLayers];
+      }
+
+      apply(selectionSet) {
+        const interactionDm = selectionSet.mergedEnter.model;
+
+        const sideEffectGroup = this.drawingContext().sideEffectGroup;
+        const dynamicMarkGroup = this.createElement(
+          sideEffectGroup,
+          "g",
+          this._layers,
+          ".stack-layer"
+        );
+        dynamicMarkGroup.each(function(layer) {
+          layer.mount(this).data(interactionDm);
+        });
+
+        return this;
+      }
+    }
+  );
+
+  ActionModel.for(canvas).mapSideEffects({
+    highlight: ["stack-layer"]
+  });
+};
 
 const createStepLineAndBar = (
   monthlyDataModel,
@@ -203,6 +211,7 @@ const createStepLineAndBar = (
   createBar(monthlyDataModel, datamodel);
 
   selection.addEventListener("change", e => {
+	infoBoxCreator([], '', '')
     switch (selection.value) {
       case chartTypes[1]:
         createStepLine(datamodel, numberOfIncidents);
@@ -225,7 +234,7 @@ createStepLine = (dataModel, numberOfIncidents) => {
     .rows(["Number of Incidents"])
     .layers([
       { mark: "line", interpolate: "stepAfter" },
-      { mark: "point", source: "lastPoint", 	className: 'lastPoint', },
+      { mark: "point", source: "lastPoint", className: "lastPoint" },
       {
         mark: "text",
         name: "firstText",
@@ -239,13 +248,13 @@ createStepLine = (dataModel, numberOfIncidents) => {
             }
           }
         },
-		source: "lastPoint",
-	
+        source: "lastPoint",
+
         encodingTransform: (points, layer, dependencies) => {
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
             let size = smartLabel.getOriSize(points[i].text);
-            points[i].update.y +=  0;
+            points[i].update.y += 0;
             points[i].update.x += size.width / 2 + 10;
           }
           return points;
@@ -267,7 +276,7 @@ createStepLine = (dataModel, numberOfIncidents) => {
           let smartLabel = dependencies.smartLabel;
           for (let i = 0; i < points.length; i++) {
             let size = smartLabel.getOriSize(points[i].text);
-            points[i].update.y += size.height  ;
+            points[i].update.y += size.height;
             points[i].update.x += size.width / 2 + 10;
           }
           return points;
@@ -352,4 +361,8 @@ createBar = (dataModel, dailyDm) => {
     .mount("#incidents-by-year-step-chart");
   registerListener(canvas, dailyDm, "monthly");
   stackLayerMaker(canvas);
+
+  ActionModel.for(canvas)
+//   .dissociateSideEffect(["tooltip", "highlight"])
+  .dissociateSideEffect(["crossline", "highlight"])
 };
