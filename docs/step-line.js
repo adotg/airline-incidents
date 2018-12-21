@@ -29,21 +29,24 @@ const registerListener = (canvas, datamodel, type) => {
         }
 
         apply(selectionSet, payload) {
-		  const id = payload.criteria;
-		
+          const id = payload.criteria;
+
           if (id) {
             if (type === "monthly") {
               const currDateVar = new Date(id[1][0]);
 
               const newDataModel = datamodel
-                .select(fields => {
-				  const dateVar = new Date(fields.Date.value);
-				
-                  return (
-                    dateVar.getMonth() === currDateVar.getMonth() &&
-                    dateVar.getFullYear() === currDateVar.getFullYear()
-                  );
-                }, {saveChild: false})
+                .select(
+                  fields => {
+                    const dateVar = new Date(fields.Date.value);
+
+                    return (
+                      dateVar.getMonth() === currDateVar.getMonth() &&
+                      dateVar.getFullYear() === currDateVar.getFullYear()
+                    );
+                  },
+                  { saveChild: false }
+                )
                 .groupBy(["Airline"]);
               const infoFieldsConfig = newDataModel.getFieldsConfig();
               const airlineIndex = infoFieldsConfig.Airline.index;
@@ -181,41 +184,44 @@ const createStepLineAndBar = (
   numberOfIncidents
 ) => {
   const header = document.getElementById("incidents-by-year-step-header");
-  
-  const selection = document.createElement("select");
-  selection.setAttribute("class", "dropdown-selector");
-  selection.setAttribute("id", "dropdown-selector-stepline");
-
+  let  selection = document.getElementById("dropdown-selector-stepline");
   const chartTypes = ["By Month", "Daily Cumulative"];
+  if (!selection) {
+    selection = document.createElement("select");
+    selection.setAttribute("class", "dropdown-selector");
+    selection.setAttribute("id", "dropdown-selector-stepline");
 
-  chartTypes.forEach(e => {
-    const option = document.createElement("option");
-    option.setAttribute("value", e);
-    option.innerHTML = e;
-    if (e === chartTypes[0]) {
-      option.setAttribute("selected", true);
+    chartTypes.forEach(e => {
+      const option = document.createElement("option");
+      option.setAttribute("value", e);
+      option.innerHTML = e;
+      if (e === chartTypes[0]) {
+        option.setAttribute("selected", true);
+      }
+      selection.appendChild(option);
+    });
+    header.appendChild(selection);
+  }
+
+//   createBar(monthlyDataModel, datamodel);
+  const dropDownChange = e => {
+    infoBoxCreator([], "", "");
+
+    switch (selection.value) {
+      case chartTypes[1]:
+        createStepLine(datamodel, numberOfIncidents);
+        break;
+      case chartTypes[0]:
+      default:
+        createBar(monthlyDataModel, datamodel);
+        break;
     }
-    selection.appendChild(option);
-  });
-  header.appendChild(selection);
+  };
+  dropDownChange();
 
-  createBar(monthlyDataModel, datamodel);
-  const dropDownChange = (e)=>{ 
-	  infoBoxCreator([], "", "");
+  selection.addEventListener("change", dropDownChange);
 
-  switch (selection.value) {
-	case chartTypes[1]:
-	  createStepLine(datamodel, numberOfIncidents);
-	  break;
-	case chartTypes[0]:
-	default:
-	  createBar(monthlyDataModel, datamodel);
-	  break;
-  }}
-
-  selection.addEventListener("change", dropDownChange)
-
-//   createDropDown(header, chartTypes, dropDownChange)
+  //   createDropDown(header, chartTypes, dropDownChange)
 };
 
 createStepLine = (dataModel, numberOfIncidents) => {
