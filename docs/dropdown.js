@@ -1,4 +1,5 @@
 const createDropDown = (elem, options, eventFunctions) => {
+  if(document.getElementsByClassName('dropdown-button-placeholder').length === 0){
   const selectButton = document.createElement("div");
   const selectButtonPlaceholder = document.createElement("div");
   selectButtonPlaceholder.innerHTML = options[0];
@@ -55,4 +56,5 @@ const createDropDown = (elem, options, eventFunctions) => {
   selectButton.appendChild(selection);
 
   elem.appendChild(selectButton);
+}
 };

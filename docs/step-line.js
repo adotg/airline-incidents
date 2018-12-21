@@ -183,6 +183,19 @@ const createStepLineAndBar = (
   datamodel,
   numberOfIncidents
 ) => {
+	const dropDownChange = (e) => {
+		infoBoxCreator([], "", "");
+	
+		switch (e) {
+		  case chartTypes[1]:
+			createStepLine(datamodel, numberOfIncidents);
+			break;
+		  case chartTypes[0]:
+		  default:
+			createBar(monthlyDataModel, datamodel);
+			break;
+		}
+	  };
   const header = document.getElementById("incidents-by-year-step-header");
   let  selection = document.getElementById("dropdown-selector-stepline");
   const chartTypes = ["By Month", "Daily Cumulative"];
@@ -200,28 +213,23 @@ const createStepLineAndBar = (
       }
       selection.appendChild(option);
     });
-    header.appendChild(selection);
+
+	if ("ontouchstart" in document.documentElement){
+		header.appendChild(selection);
+		selection.addEventListener("change",  e=>dropDownChange(selection.value));
+	  } else {
+		createDropDown(header, chartTypes, e=>{
+			dropDownChange(e.srcElement.innerHTML)
+		})
+	  }
   }
 
 //   createBar(monthlyDataModel, datamodel);
-  const dropDownChange = e => {
-    infoBoxCreator([], "", "");
-
-    switch (selection.value) {
-      case chartTypes[1]:
-        createStepLine(datamodel, numberOfIncidents);
-        break;
-      case chartTypes[0]:
-      default:
-        createBar(monthlyDataModel, datamodel);
-        break;
-    }
-  };
+  
   dropDownChange();
 
-  selection.addEventListener("change", dropDownChange);
 
-  //   createDropDown(header, chartTypes, dropDownChange)
+
 };
 
 createStepLine = (dataModel, numberOfIncidents) => {
