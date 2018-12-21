@@ -7,11 +7,11 @@
   }
 
   .airline {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   #number {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .text {
@@ -104,7 +104,19 @@
   }
 
   h2 {
-    font-size: 16px;
+    font-size: 18px;
+  }
+
+  .airline {
+    font-size: 14px;
+  }
+
+  #number {
+    font-size: 9px;
+  }
+
+  .text {
+    font-size: 6px;
   }
   .header {
     height: 20px;
@@ -167,7 +179,17 @@
   h2 {
     font-size: 14px;
   }
+  .airline {
+    font-size: 12px;
+  }
 
+  #number {
+    font-size: 8px;
+  }
+
+  .text {
+    font-size: 6px;
+  }
   #heatmap-info-box .info-box-header {
     font-size: 14px;
   }

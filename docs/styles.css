@@ -350,10 +350,13 @@ div#incidents-by-year-step-info-box {
     /* background: #eee; */
     padding: 3px 10px;
     display: none;
-    color: -webkit-link;
-
-    text-decoration: underline;
+    
+    color: #4eadf8;
+   
     /* border: 1px solid rgba(0,0,0,0.4); */
+}
+#clear-button:hover {
+  text-decoration: underline;
 }
 
 #empty-info{
@@ -378,15 +381,16 @@ div#incidents-by-year-step-info-box {
 
 
 .airline {
-  font-size: 32px;
+  font-size: 20px;
 }
 
 #number {
   font-family: 'Fira Mono', monospace;
-  font-size: 18px;
+  font-size: 12px;
 }
 
 .text {
-  font-size: 12px;
+  font-size: 9px;
   vertical-align: super;
+  
 }
