@@ -11,8 +11,10 @@
     />
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
 
+    <link href="formalize.css" rel="stylesheet" />
     <link href="styles.css" rel="stylesheet" />
     <link href="mobile.css" rel="stylesheet" />
+    <link href="dropdown.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -57,7 +59,7 @@
             <div class = 'back-button'>&#8592 Back to year view</div>
         </div>
         <div id="incidents-by-year-heatmap-content-info-box"  class= "sub-content">
-            <div id = "clear-button">Clear</div>
+            <div id = "clear-button" href="#">Clear</div>
             <div class ="info-box" id ="heatmap-info-box">
        
               <div class = "info-box-link" id = "empty-info">Click on the HeatMap to get a detailed view </div>
@@ -78,6 +80,7 @@
       type="text/javascript"
       src="https://cdn.charts.com/lib/muze/core/latest/muze.js"
     ></script>
+    <script type="text/javascript" src="dropdown.js"></script>
     <script type="text/javascript" src="helper.js"></script>
     <script type="text/javascript" src="data-builder.js"></script>
     <script type="text/javascript" src="stacked-bar.js"></script>

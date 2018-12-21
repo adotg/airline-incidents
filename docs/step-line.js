@@ -134,7 +134,6 @@ const stackLayerMaker = canvas => {
           y: { field: "Count of Incidents" },
           color: {
             field: "Airline"
-            // value: () => "#eee"
           }
         };
         const barLayers = visualUnit.addLayer({
@@ -182,11 +181,13 @@ const createStepLineAndBar = (
   numberOfIncidents
 ) => {
   const header = document.getElementById("incidents-by-year-step-header");
+  
   const selection = document.createElement("select");
   selection.setAttribute("class", "dropdown-selector");
   selection.setAttribute("id", "dropdown-selector-stepline");
 
   const chartTypes = ["By Month", "Daily Cumulative"];
+
   chartTypes.forEach(e => {
     const option = document.createElement("option");
     option.setAttribute("value", e);
@@ -199,19 +200,22 @@ const createStepLineAndBar = (
   header.appendChild(selection);
 
   createBar(monthlyDataModel, datamodel);
+  const dropDownChange = (e)=>{ 
+	  infoBoxCreator([], "", "");
 
-  selection.addEventListener("change", e => {
-    infoBoxCreator([], "", "");
-    switch (selection.value) {
-      case chartTypes[1]:
-        createStepLine(datamodel, numberOfIncidents);
-        break;
-      case chartTypes[0]:
-      default:
-        createBar(monthlyDataModel, datamodel);
-        break;
-    }
-  });
+  switch (selection.value) {
+	case chartTypes[1]:
+	  createStepLine(datamodel, numberOfIncidents);
+	  break;
+	case chartTypes[0]:
+	default:
+	  createBar(monthlyDataModel, datamodel);
+	  break;
+  }}
+
+  selection.addEventListener("change", dropDownChange)
+
+//   createDropDown(header, chartTypes, dropDownChange)
 };
 
 createStepLine = (dataModel, numberOfIncidents) => {

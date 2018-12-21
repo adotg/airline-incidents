@@ -40,7 +40,7 @@ const createTrellis = (datamodel, airlines) => {
       .columns(["Date"])
       .detail(["Details"])
       .color({ value: "#414141" })
-      .title(jsUcfirst(e[0]))
+      .title(html`<span class="airline">${jsUcfirst(e[0])}</span> <span class="no text">${newDm.getData().data.length}</span> <span class="text">incidents</span>`)
       .config({
         axes: {
           x: {
@@ -206,16 +206,16 @@ const createTrellis = (datamodel, airlines) => {
                   new Date(fields.Date.value).getFullYear() ==
                   e.srcElement.innerHTML
               );
-
+               
               const fieldConfigLatest = latestDm.getFieldsConfig();
               const index = fieldConfigLatest["Date"].index;
-              const arr = latestDm.getData().data.map(e => e[index]);
+              const arr = latestDm.getData().data.map(e => [e[index]]);
+          
 
               behaviours.forEach(behaviour =>
                 firebolt.dispatchBehaviour(behaviour, {
-                  criteria: {
-                    Date: arr
-                  },
+                  criteria: 
+                    [['Date'], ...arr],
                   Year: e.srcElement.innerHTML
                 })
               );
@@ -312,33 +312,43 @@ const createTrellis = (datamodel, airlines) => {
                 const maxWidth = Math.max(smartLabel.getOriSize(split[0]).width, smartLabel.getOriSize(split[1]).width);
      
                 for (let i = 0; i < newPoints.length; i++) {
-                  let size = smartLabel.getOriSize(newPoints[i].text);
+                  let size = smartLabel.getOriSize(split[i]);
                   const { x, y } = newPoints[i].update;
                   newPoints[i].update = Object.assign({}, newPoints[i].update);
       
                   if (newPoints[i].update.x < maxWidth) {
-                    newPoints[i].update.x += width/(years.length-1)  + maxWidth/2;
+                    newPoints[i].update.x += width/(years.length-1)  + size.width/2;
                   } else {
-                    newPoints[i].update.x -= maxWidth/2 + 5 ;
+                    newPoints[i].update.x -= size.width/2 + 5 ;
                   }
                   newPoints[i].update.y = 15;
                   if(i>0){
                     newPoints[i].update.y +=size.height;
                   }
                   newPoints[i].text = split[i];
+             
+                 
                 }
+                
+                const secondPoint = Object.assign({}, newPoints[1]);
+                const secondText = secondPoint.text;
+                const newSplit = secondText.split(':');
+                if(newSplit.length>1){
+                  const newObj = Object.assign({}, secondPoint);
+         
+                  
+                  secondPoint.text = `${newSplit[0]}: `;
+                  newObj.text = `${newSplit[1]}`;
+                  newObj.update = Object.assign({}, secondPoint.update);
+                  secondPoint.update.x -= 5;
+                  newObj.update.x += smartLabel.getOriSize(newSplit[0]).width/2 + 5;
+                  newObj.style =  Object.assign({}, secondPoint.style);
+                  newObj.style['font-weight'] = 'bold';
+                  newPoints[1] = secondPoint
+                  newPoints[2] = newObj
+                 }
   
                 return newPoints;
-                // points.forEach(point => {
-                //   let size = smartLabel.getOriSize(point.text);
-                //   if (point.update.x < size.width) {
-                //     point.update.x += size.width / 2 + 25;
-                //   } else {
-                //     point.update.x -= size.width / 2;
-                //   }
-                //   point.update.y = 10;
-                // });
-                // return points;
               }
             ])
           }) 
@@ -351,12 +361,14 @@ const createTrellis = (datamodel, airlines) => {
           }
 
           apply(selectionSet, payload) {
+
             if (payload.sourceCanvas === this.firebolt.context.parentAlias()) {
               const selectedDataModel = selectionSet.mergedEnter.model;
               const totalData = selectedDataModel.groupBy([""]);
               const allIncidents = totalData.getData().data.length
-                ? `Number of Incidents in, ${payload.Year}: ${
-                    totalData.getData().data[0][0]
+             
+                ? `Number of Incidents, in ${payload.Year}: ${
+                  selectedDataModel.getData().data.length
                   }`
                 : `No incident recorded, in ${payload.Year}`;
               const jsonData = payload.Year

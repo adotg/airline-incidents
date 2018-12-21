@@ -164,6 +164,8 @@
     h2{
         font-size: 14px;
     }
+
+
     #heatmap-info-box .info-box-header {
  
     font-size: 14px;
@@ -172,7 +174,8 @@
     #clear-button{
         font-size: 12px;
     }
-  @media screen and (max-width: 375px) {
+}
+  @media screen and (max-width: 400px) {
     h2{
         font-size: 13px;
     }

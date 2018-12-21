@@ -24,6 +24,17 @@ fetch("data.json").then(resp =>
         createTrellis(trellisDM, airlines);
       }
       chartCreator();
+      var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+   
+      if(!isChrome){
+        const letterSpacing = '-1px';
+        const h2 = document.getElementsByTagName('h2');
+        
+        for(let i = 0; i<h2.length; i++){
+          h2[i].style.letterSpacing = letterSpacing;
+        }
+
+      }
   //     const supportsOrientationChange = window.onorientationchange ;
   //  const orientationEvent = supportsOrientationChange ? "orientationchange" : "resize";
   //     // document.getElementById('number-of-incidents-header').innerHTML = screen.width;
@@ -40,11 +51,11 @@ fetch("data.json").then(resp =>
 //     }
 // };
 
-window.addEventListener("resize", checkOrientation, false);
-window.addEventListener("orientationchange", checkOrientation, false);
+// window.addEventListener("resize", checkOrientation, false);
+// window.addEventListener("orientationchange", checkOrientation, false);
 
 // (optional) Android doesn't always fire orientationChange on 180 degree turns
-setInterval(checkOrientation, 2000);
+// setInterval(checkOrientation, 2000);
     
 
   })

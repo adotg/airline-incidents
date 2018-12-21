@@ -66,7 +66,7 @@ const createHeatMap = datamodel => {
     .config({
       axes: {
         x: { padding: 0, domain: years },
-        y: { padding: 0, domain: allAirlines }
+        y: { padding: 0, domain: allAirlines, tickFormat: val => jsUcfirst(val) }
       },
       legend: {
         color: {
@@ -100,9 +100,9 @@ const createHeatMap = datamodel => {
 
         for (var i = 0; i < ticks.length; i++) {
           ticks[i].style.cursor = "pointer";
-          if (dataYears.indexOf(+ticks[i].innerHTML) > -1) {
+          // if (dataYears.indexOf(+ticks[i].innerHTML) > -1) {
             ticks[i].classList.add("ticks-link");
-          }
+          // }
 
           content.getElementsByClassName("muze-ticks-x-0-0");
 
@@ -249,6 +249,8 @@ const createHeatMap = datamodel => {
           } `;
           infoBox.appendChild(infoBoxHeader);
           document.getElementById('clear-button').style.display = 'block';
+          const infoBoxContent = document.createElement("div");
+          infoBoxContent.setAttribute("class", "info-box-content");
           newDataModel.getData().data.forEach(e => {
             const infoBoxElem = document.createElement("div");
 
@@ -262,8 +264,10 @@ const createHeatMap = datamodel => {
             innerHTML += `<div class = "info-link"> Click <a target="_blank" href = "${fullDoc}">here</a> to get the full story</div>`;
 
             infoBoxElem.innerHTML = innerHTML;
-            infoBox.appendChild(infoBoxElem);
+            infoBoxContent.appendChild(infoBoxElem);
+          
           });
+          infoBox.appendChild(infoBoxContent);
         }
           return this;
         }
