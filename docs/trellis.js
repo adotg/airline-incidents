@@ -4,21 +4,23 @@ const createTrellis = (datamodel, airlines) => {
     "incidents-by-year-trellis-content"
   );
   parentDiv.innerHTML = "";
+  let parentDivHeight = 0;
   let trellisChartDim = { width: 0, height: 0 };
   if (screen.width < 480) {
     trellisChartDim.width = "calc(100% - 10px)";
     trellisChartDim.height = "250px";
-    parentDiv.style.height = "1500px";
+    parentDivHeight = 260* airlines.length;
+
   } else if (screen.width < 1080) {
     trellisChartDim.width = "calc(50% - 30px)";
     trellisChartDim.height = "250px";
-    parentDiv.style.height = "750px";
+    parentDivHeight = 260* Math.ceil(airlines.length/2);
   } else {
     trellisChartDim.width = "calc(33.33% - 25px)";
     trellisChartDim.height = "250px";
-    parentDiv.style.height = "500px";
+    parentDivHeight = 260* Math.ceil(airlines.length/3);
   }
-
+  parentDiv.style.height = `${parentDivHeight}px`;
   airlines.forEach((e, i) => {
     const newElement = document.createElement("div");
     newElement.setAttribute("id", `incidents-${i}`);
@@ -40,7 +42,7 @@ const createTrellis = (datamodel, airlines) => {
       .columns(["Date"])
       .detail(["Details"])
       .color({ value: "#414141" })
-      .title(html`<span class="airline">${jsUcfirst(e[0])}</span> <span class="no text">${newDm.getData().data.length}</span> <span class="text">incidents</span>`)
+      .title(html`<span class="airline">${jsUcfirst(e[0])}</span> <span id = "number" class="text">${newDm.getData().data.length}</span> <span class="text">incidents</span>`)
       .config({
         axes: {
           x: {
