@@ -16,12 +16,12 @@ fetch("data.json").then(resp =>
       "number-of-incidents-content"
     ).innerHTML = numberOfIncidents;
     const chartCreator = () => {
-      setTimeout(()=>{
+
       createStackedBar(airlineDM, airlines);
       createStepLineAndBar(incidentDmMonthly, incidentDm, numberOfIncidents);
       createHeatMap(sdm);
       createTrellis(trellisDM, airlines);
-      },100)
+ 
     };
     chartCreator();
     var isChrome =
