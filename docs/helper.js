@@ -42,7 +42,7 @@ const cumulativeCalculationAirlineDate = dm => {
 
 const genericTickFormatDate= (v)=>{
   const val = new Date(v).getFullYear();
-  if(val <'2009' || val>'2018'){
+  if(val <'2009' || val>'2019'){
     return '';
   } return val
 }
@@ -141,7 +141,8 @@ const colorsForAirlines = {
   "air-india": "#f3a737",
   airasia: "#f11a12",
   vistara: "#592b50",
-  goair: "#1c5891"
+  goair: "#1c5891",
+  spicejet: '#f37d14'
 };
 
 
