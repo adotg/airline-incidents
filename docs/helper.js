@@ -136,13 +136,13 @@ function jsUcfirst(string) {
 }
 
 const colorsForAirlines = {
-  indigo: "#3090ca",
-  "jet-airways": "#f6e291",
-  "air-india": "#f3a737",
-  airasia: "#f11a12",
-  vistara: "#592b50",
-  goair: "#1c5891",
-  spicejet: '#f37d14'
+  Indigo: "#3090ca",
+  'Jet Airways': "#f6e291",
+  'Air India': "#f3a737",
+  AirAsia: "#f11a12",
+  Vistara: "#592b50",
+  GoAir: "#1c5891",
+  SpiceJet: '#f37d14'
 };
 
 
