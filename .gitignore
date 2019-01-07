@@ -6,6 +6,7 @@ __pycache__/
 .DS_Store
 .idea
 .vscode
+data/*-raw.html
 
 # C extensions
 *.so
