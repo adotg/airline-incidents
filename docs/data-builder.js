@@ -2,9 +2,20 @@ const years = [];
 let dataYears = [];
 let allAirlines = [];
 
+const formalNames = {
+  airasia: 'AirAsia',
+  indigo: 'Indigo',
+  'air-india': 'Air India',
+  goair: 'GoAir',
+  spicejet: 'SpiceJet',
+  'jet-airways': 'Jet Airways',
+  vistara: 'Vistara'
+};
+
 const buildData = originalData => {
   const data = originalData
     .filter(row => !!row[1]) /* Delets rows which does not contain any data */
+    .map(row => ((row[0] = formalNames[row[0]]), row))
     .map(row => ((row[2] = JSON.stringify(row[2])), row));
 
   const nData = [["Airline", "Date", "Details"]];
