@@ -30,6 +30,9 @@ def extractInf (subtree):
 def processInf (inf):
     head = inf['content'][0]
     date_extract = re.search(DATE_REGEXP, head)
+
+    if date_extract == None:
+        return None
     
     if date_extract:
         date = date_extract.group(1) + '-' + date_extract.group(2) + '-' + date_extract.group(4)
@@ -53,7 +56,11 @@ for raw_file in glob.glob(RAW_FILE_PATTERN):
     data = [] 
     root = etree.parse(StringIO(content), parser)
     for elem in root.xpath('.//div[contains(@class, "post-container")]'):
-        data.append(processInf(extractInf(elem)))
+        processedVal = processInf(extractInf(elem))
+        if (processedVal == None):
+            continue
+
+        data.append(processedVal)
 
     # Substring without the extension, which gives the airline name
     n_list = normalizeToTabular(raw_file[:len(raw_file) - len(EXT)], data)
