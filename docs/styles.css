@@ -345,16 +345,13 @@ div#incidents-by-year-step-info-box {
 #clear-button {
     cursor: pointer;
     position: absolute;
-    /* top: -5px; */
+    text-decoration: underline;
     right: 0px;
-    /* background: #eee; */
     padding: 3px 10px;
     display: none;
-    
     color: #4eadf8;
-   
-    /* border: 1px solid rgba(0,0,0,0.4); */
 }
+
 #clear-button:hover {
   text-decoration: underline;
 }
