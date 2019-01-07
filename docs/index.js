@@ -1,59 +1,63 @@
-fetch('data.json').then(resp =>
-    resp.json().then((data) => {
-        const DataModel = muze.DataModel;
+fetch("data.json").then(resp =>
+  resp.json().then(originalData => {
+    const {
+      data,
+      sdm,
+      numberOfIncidents,
+      airlines,
+      airlineDM,
+      trellisDM,
+      incidentDm,
+      incidentDmMonthly
+    } = buildData(originalData);
 
-        data = data
-            .filter(row => !!row[1]) /* Delets rows which does not contain any data */
-            .map(row => (row[2] = JSON.stringify(row[2]), row));
+    // Main KPI
+    document.getElementById(
+      "number-of-incidents-content"
+    ).innerHTML = numberOfIncidents;
+    const chartCreator = () => {
 
-        const nData = [
-            ['Airline', 'Date', 'Details']
-        ];
-        data.forEach(row => nData.push(row));
+      createStackedBar(airlineDM, airlines);
+      createStepLineAndBar(incidentDmMonthly, incidentDm, numberOfIncidents);
+      createHeatMap(sdm);
+      createTrellis(trellisDM, airlines);
+ 
+    };
+    chartCreator();
+    var isChrome =
+      /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
-        console.log(nData);
+    if (!isChrome) {
+      const letterSpacing = "-1px";
+      const h2 = document.getElementsByTagName("h2");
 
-        const schema = [{
-            name: 'Airline',
-            type: 'dimension'
-        }, {
-            name: 'Date',
-            type: 'dimension',
-            subtype: 'temporal',
-            format: '%b-%e-%Y'
-        }, {
-            name: 'Details',
-            type: 'dimension'
-        }];
+      for (let i = 0; i < h2.length; i++) {
+        h2[i].style.letterSpacing = letterSpacing;
+      }
+    }
+    const supportsOrientationChange = 'onorientationchange' in window;
+    const orientationEvent = supportsOrientationChange
+      ? "orientationchange"
+      : "resize";
 
-        const dm = new DataModel(nData, schema);
-        let sdm = dm.sort([['Date']])
+    // document.getElementById('number-of-incidents-header').innerHTML = screen.width;
+    window.addEventListener(orientationEvent, chartCreator);
 
-        // Create a variable to create pseudo axis
-        sdm = sdm.calculateVariable({
-            name: 'pseudo-axis',
-            type: 'measure',
-            defAggFn: 'first'
-        }, ['Date', () => 1]);
+    // var previousOrientation = window.orientation;
+    // const width = screen.width;
+    // const height = screen.height;
+    // var checkOrientation = function() {
+    //   if (window.orientation !== previousOrientation) {
+    //     previousOrientation = window.orientation;
+    //     chartCreator();
+    //     // orientation changed, do your magic here
+    //   }
+    // };
 
-        muze().canvas()
-            .data(sdm)
-            .height(100)
-            .width(600)
-            .rows(['pseudo-axis'])
-            .columns(['Date'])
-            .color('Airline')
-            .layers([{ mark: 'point' }])
-            .mount('#timeline-viz')
-    })
+    // window.addEventListener("resize", checkOrientation, false);
+    // window.addEventListener("orientationchange", checkOrientation, false);
+
+    // (optional) Android doesn't always fire orientationChange on 180 degree turns
+    // setInterval(checkOrientation, 2000);
+  })
 );
-
-
-/**
- * Plan
- * ------------
- * 
- * Q: How many incidents/accidents are recorded so far?
- * Q: Contribution of each airline on total incidents?
- * Q: year by year accidents with airline?
- */

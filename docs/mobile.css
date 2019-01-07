@@ -1,0 +1,204 @@
+@media screen and (max-width: 1080px) {
+  #airline-incidents {
+    width: calc(100% - 60px);
+    margin-left: 30px;
+    height: 100%;
+    font-weight: regular;
+  }
+
+  .airline {
+    font-size: 16px;
+  }
+
+  #number {
+    font-size: 9px;
+  }
+
+  .text {
+    font-size: 8px;
+  }
+  .page-header h2 {
+    font-size: 20px;
+  }
+  div#number-of-incidents-content {
+    font-size: 40px;
+  }
+
+  #dropdown-selector-stepline {
+    height: calc(100% - 2px);
+
+    font-size: 8px;
+
+    padding: 0px !important;
+  }
+  h2 {
+    font-size: 16px;
+  }
+  .header {
+    height: 25px;
+  }
+  #incidents-breakup-legend,
+  .legend-box {
+    font-size: 9px;
+  }
+  #incidents-by-year-heatmap {
+    height: 80%;
+    min-height: 500px;
+  }
+  #incidents-by-year-heatmap-content-chart,
+  #incidents-by-year-heatmap-content-info-box {
+    width: 100%;
+    position: relative;
+  }
+  #incidents-by-year-heatmap-content-chart {
+    height: 60%;
+  }
+  #incidents-by-year-heatmap-content-info-box {
+    height: 40%;
+  }
+  .incidents-trellis {
+    margin-left: 15px;
+  }
+  #heatmap-info-box {
+    border-left: 0px solid #eee;
+    border-top: 1px solid #eee;
+  }
+  #heatmap-info-box .info-box-header {
+    padding-top: 5px;
+  }
+  #empty-info {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .component {
+    margin-bottom: 15px;
+  }
+  #number-of-incidents,
+  #incidents-breakup {
+    width: 100%;
+    margin-left: 0px;
+  }
+  .page-header h2 {
+    font-size: 20px;
+  }
+  #number-of-incidents {
+    height: 10%;
+  }
+  #dropdown-selector-stepline {
+    height: calc(100% - 2px);
+
+    font-size: 8px;
+
+    padding: 0px !important;
+  }
+  #airline-incidents {
+    width: calc(100% - 40px);
+    margin-left: 20px;
+    height: 100%;
+    font-weight: regular;
+  }
+  div#number-of-incidents-content {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .airline {
+    font-size: 14px;
+  }
+
+  #number {
+    font-size: 9px;
+  }
+
+  .text {
+    font-size: 6px;
+  }
+  .header {
+    height: 20px;
+  }
+  #incidents-breakup-legend,
+  .legend-box {
+    font-size: 8px;
+  }
+  #incidents-by-year-step-info-box .info-box-header {
+    font-size: 16px;
+    margin: 0px 4px 4px 4px;
+  }
+
+  .info-content {
+    font-weight: 300;
+    font-size: 10px;
+  }
+  #incidents-by-year-heatmap {
+    height: 60%;
+    min-height: 400px;
+  }
+  #incidents-by-year-heatmap-content-chart,
+  #incidents-by-year-heatmap-content-info-box {
+    width: 100%;
+    position: relative;
+  }
+  #incidents-by-year-heatmap-content-chart {
+    height: 50%;
+  }
+  #heatmap-info-box {
+    border-left: 0px solid #eee;
+    border-top: 1px solid #eee;
+  }
+  #incidents-by-year-heatmap-content-info-box {
+    height: 50%;
+  }
+  .info-box-header {
+    padding-top: 5px;
+  }
+
+  #heatmap-info-box .info-box-header {
+    font-size: 16px;
+  }
+  .info-header {
+    font-size: 14px;
+  }
+  .info-link {
+    font-size: 12px;
+  }
+  .incidents-trellis {
+    margin-left: 0px;
+  }
+  #heatmap-info-box .info-box-header {
+    padding-top: 5px;
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  h2 {
+    font-size: 14px;
+  }
+  .airline {
+    font-size: 12px;
+  }
+
+  #number {
+    font-size: 8px;
+  }
+
+  .text {
+    font-size: 6px;
+  }
+  #heatmap-info-box .info-box-header {
+    font-size: 14px;
+  }
+  #clear-button {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 400px) {
+  h2 {
+    font-size: 13px;
+  }
+}
