@@ -20,5 +20,5 @@ This is a simple study which draws the data as-is for all Indian Airline Inciden
 ## Disclaimer
 There are chances that the data might not capture all the incidents for all the airlines.
 
-Screen:
+## Screen:
 ![Screen](https://raw.githubusercontent.com/adotg/airline-incidents/master/screen.png)
