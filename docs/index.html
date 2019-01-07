@@ -1,60 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-    <link href="https://cdn.charts.com/lib/muze/core/latest/themes/muze.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
-</head>
+    <link
+      href="https://cdn.charts.com/lib/muze/core/latest/themes/muze.css"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
 
-<body>
+    <link href="styles.css" rel="stylesheet" />
+    <link href="mobile.css" rel="stylesheet" />
+    <link href="dropdown.css" rel="stylesheet" />
+  </head>
+
+  <body>
     <!-- <div id="timeline-viz"></div> -->
 
     <div id="airline-incidents">
-        <div class = "page-header"><h2>Airline Incidents</h2></div>
-        <div class="component" id="number-of-incidents">
-            <div id="number-of-incidents-header" class="header">
-                <h2>Total # of Incidents</h2>
-            </div>
-            <div id="number-of-incidents-content" class="content">
+      <div class="page-header"><h2>Airline Incidents</h2></div>
 
-            </div>
+      <div class="component" id="number-of-incidents">
+        <div id="number-of-incidents-header" class="header">
+          <h2>Total # of Incidents</h2>
         </div>
-        <div class="component" id="incidents-breakup">
-                <div id="incidents-breakup-viz"></div>
-                <div id="incidents-breakup-legend"></div>
-        </div>
-        <div class="component" id="incidents-by-year-step">
-            <div id="incidents-by-year-step-header" class="header">
-                <h2>Airline Incidents By Year</h2>
-            </div>
-            <div id="incidents-by-year-step-content" class="content">
+        <div id="number-of-incidents-content" class="content"></div>
+      </div>
 
-            </div>
+      <div class="component" id="incidents-breakup">
+        <div id="number-of-incidents-breakup-header" class="header">
+          <h2>Contribution of each airline on overall incidents</h2>
         </div>
-        <div class="component" id="incidents-by-year-heatmap">
-            <div id="incidents-by-year-heatmap-header" class="header">
-                <h2>Airline Incidents By Year</h2>
-            </div>
-            <div id="incidents-by-year-heatmap-content" class="content">
+        <div id="number-of-incidents-breakup-content" class="content">
+          <div id="incidents-breakup-viz"></div>
+          <div id="incidents-breakup-legend"></div>
+        </div>
+      </div>
 
+      <div class="component" id="incidents-by-year-step">
+        <div id="incidents-by-year-step-header" class="header">
+          <h2>Airline Incidents By Year</h2>
+        </div>
+        <div id="incidents-by-year-step-content" class="content">
+          <div id = "incidents-by-year-step-info-box" class = "info-box"></div>
+          <div id = "incidents-by-year-step-chart" ></div>
+        </div>
+      </div>
+      
+      <div class="component" id="incidents-by-year-heatmap">
+        <div id="incidents-by-year-heatmap-header" class="header">
+          <h2>Airline Incidents By Year</h2>
+        </div>
+        <div id="incidents-by-year-heatmap-content" class="content">
+        <div id="incidents-by-year-heatmap-content-chart" class= "sub-content" >
+            <div class = 'back-button'>&#8592 Back to year view</div>
+        </div>
+        <div id="incidents-by-year-heatmap-content-info-box"  class= "sub-content">
+            <div id = "clear-button" href="#">Clear</div>
+            <div class ="info-box" id ="heatmap-info-box">
+       
+              <div class = "info-box-link" id = "empty-info">Click on the HeatMap to get a detailed view </div>
             </div>
         </div>
-        <div class="component" id="incidents-by-year-trellis">
-            <div id="incidents-by-year-trellis-header" class="header">
-                <h2>Cumulative Incidents by Year per Airline</h2>
-            </div>
-            <div id="incidents-by-year-trellis-content" class="content">
 
-            </div>
         </div>
+      </div>
+      <div class="component" id="incidents-by-year-trellis">
+        <div id="incidents-by-year-trellis-header" class="header">
+          <h2>Cumulative Incidents by Year per Airline</h2>
+        </div>
+        <div id="incidents-by-year-trellis-content" class="content"></div>
+      </div>
     </div>
 
-    <script type="text/javascript" src="https://cdn.charts.com/lib/muze/core/latest/muze.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.charts.com/lib/muze/core/latest/muze.js"
+    ></script>
+    <script type="text/javascript" src="dropdown.js"></script>
+    <script type="text/javascript" src="helper.js"></script>
+    <script type="text/javascript" src="data-builder.js"></script>
+    <script type="text/javascript" src="stacked-bar.js"></script>
+    <script type="text/javascript" src="step-line.js"></script>
+    <script type="text/javascript" src="heat-map.js"></script>
+    <script type="text/javascript" src="trellis.js"></script>
     <script type="text/javascript" src="index.js"></script>
-</body>
-
+  </body>
 </html>

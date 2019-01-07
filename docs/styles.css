@@ -1,136 +1,396 @@
-html, body{
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    background-color: #f4f4f4 ;
-    font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  background-color: #f4f4f4;
+  font-family: 'Fira Sans', sans-serif;
 }
 
-#airline-incidents{
-    width: calc(100% - 200px);
-    margin-left: 100px;
-    height: 100%;
-    font-weight: regular;
+#airline-incidents {
+  width: calc(100% - 200px);
+  margin-left: 100px;
+  height: 100%;
+  font-weight: regular;
 }
-#airline-incidents h2, #airline-incidents h3{
-    margin: 0px;
+#airline-incidents h2,
+#airline-incidents h3 {
+  margin: 0px;
 }
 .muze-title-container .muze-header-cell {
-    font-size: 20px;
-    font-weight: 700;
-    color: #5f5f5f;
+  font-size: 20px;
+  font-weight: 700;
+  color: #5f5f5f;
 }
 
-.page-header{
+.page-header {
     width: 100%;
-    height: 8%;
+    height: fit-content;
+    height: -moz-fit-content;
+
     margin-top: 10px;
+    margin-bottom: 10px;
     font-size: 24px;
-    text-align: center
+  text-align: center;
 }
-#incidents-breakup .muze-legend-title{
-    height: 0px !important;
-}
-
-#incidents-breakup .muze-legend-body{
-    overflow-y: none !important;
-}
-.component{
-    height: 10px;
-    width: 10px;
-    float: left;
-    margin-bottom: 50px;
-    background: white;
-    min-height: 200px;
+#incidents-breakup .muze-legend-title {
+  height: 0px !important;
 }
 
-.header{
-    color: #a7a7a7;
-    margin-left: 25px;
-    margin-top: 10px;
-    height: 40px;
-    width: calc(100% - 25px);
-    float: left;
+#incidents-breakup .muze-legend-body {
+  overflow-y: none !important;
 }
-.content{
-    margin: 10px;
-    width: calc(100% - 20px);
-    height: calc(100% - 60px);
-    float: left;
+.component {
+  height: 10px;
+  width: 10px;
+  float: left;
+  margin-bottom: 50px;
+  background: white;
+  min-height: 200px;
 }
 
-#number-of-incidents{
-    height: 10%;
-    min-height: 130px;
-    width: 23%;
+.header {
+  color: #a7a7a7;
+  margin-left: 15px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  height: 35px;
+  width: calc(100% - 30px);
+  float: left;
+  border-bottom: 1px solid #eee;
+}
+.content {
+  margin: 10px;
+  margin-top: 0px;
+  width: calc(100% - 20px);
+  height: calc(100% - 60px);
+  float: left;
 }
 
-#number-of-incidents-content{
-    font-size: 44px;
-    font-weight: bold;
-    margin-top: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-bottom: 0px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+#number-of-incidents {
+  height: 180px;
+  min-height: 130px;
+  width: 23%;
 }
 
+#number-of-incidents-content {
+  font-size: 60px;
+  font-weight: bold;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-#incidents-breakup{
-    height: 15%;
-    width: calc(77% - 25px);
-    min-height: 130px;
-    margin-left: 25px;
-    background: none;
+#incidents-breakup {
+  height: 180px;
+  width: calc(77% - 25px);
+  min-height: 130px;
+  margin-left: 25px;
+}
+#number-of-incidents-breakup-content {
+  margin-top: -10px;
 }
 
 #incidents-breakup-viz,
-#incidents-breakup-legend{
-    width: 100%;
+#incidents-breakup-legend {
+  width: 100%;
 }
-#incidents-breakup-legend{
-    /* margin-top: 1px; */
-    font-size: 12px;
+
+#incidents-breakup-legend {
+  font-size: 12px;
+  display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.incidents-legend{
- float: left;
- margin: 5px;
+.incidents-legend {
+  float: left;
+  margin: 5px;
 }
-.legend-text{
-    float: left;
+.legend-text {
+  float: left;
 }
-.legend-box{
-    float: left;
-    font-size: 12px;
-    margin: 0px 5px;
+.legend-box {
+  float: left;
+  font-size: 12px;
+  margin: 0px 5px;
+}
+
+.lastPoint .muze-layer-point {
+    fill-opacity: 1 !important;
 }
 
 #incidents-by-year-step,
 #incidents-by-year-heatmap,
-#incidents-by-year-trellis{
-    width: 100%;
+#incidents-by-year-trellis {
+  width: 100%;
 }
-#incidents-by-year-step{
-   height: 35%;
+#incidents-by-year-step {
+  height: 50%;
+  min-height: 400px;
 }
-#incidents-by-year-heatmap{
-    height: 40%;
+#incidents-by-year-step h2 {
+  float: left;
 }
-#incidents-by-year-heatmap-content, #incidents-by-year-heatmap-header{
-    text-align: center;
+#dropdown-selector-stepline {
+    float: right;
+    border: none;
+    /* padding: 5px !important; */
+    height: 30px;
+    border-radius: 0px;
+    border: 0px;
+    padding: 5px 10px !important;
+    background: #eee;
+    -webkit-appearance: menulist;
+    outline: 1px solid #eee;
+    outline-offset: -1px;
+}
+
+#incidents-by-year-heatmap {
+  height: 45%;
+}
+#incidents-by-year-heatmap-content,
+#incidents-by-year-heatmap-header {
+  /* text-align: center;
     display:flex;
     align-items: center;
-    justify-content: center
+    justify-content: center */
+  position: relative;
 }
 
-#incidents-by-year-trellis{
-    height: 80%;
+.back-elem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 100%;
 }
-.incidents-trellis{
+
+#incidents-by-year-step-info-box {
+  position: relative;
+  height: 100px;
+  width: 100%;
+  /* margin-bottom: 20px; */
+    margin-left: 20px;
+  float: left;
+}
+
+#incidents-by-year-step-info-box .info-box-header {
     float: left;
-    margin-left: 25px;
+    font-size: 22px;
+    margin: 0px 10px 10px 10px;
+    height: 30px;
+    /* height: 100%; */
+    width: 100%;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
 }
 
+#incidents-by-year-step-chart {
+  width: 100%;
+  height: calc(100% - 95px);
+  float: left;
+}
+.back-button {
+  position: absolute;
+  background: #eee;
+  color: black;
+  border: 1px solid #414141;
+  border-radius: 3px;
+  top: -56px;
+  right: 0px;
+  display: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+.sub-content {
+  height: 100%;
+
+  float: left;
+}
+
+#incidents-by-year-heatmap-content-chart {
+  width: 65%;
+  position: relative;
+}
+#incidents-by-year-heatmap-content-info-box {
+  width: 35%;
+}
+#incidents-by-year-heatmap .muze-layer-bar rect {
+  cursor: pointer;
+}
+
+#incidents-by-year-step .info-box-elem {
+    padding: 0px 15px;
+    margin-right: 5px;
+    position: relative;
+}
+.info-content {
+  font-weight: 300;
+}
+.airBusA320NText text {
+    transform: rotate(-90deg);
+}
+#heatmap-info-box {
+  width: calc(100% - 30px);
+  height: calc(100% - 15px);
+  border-left: 1px solid #eee;
+  padding-left: 10px;
+  margin: 0px 10px 10px 5px;
+  /* overflow-y: scroll; */
+}
+
+.info-box-content{
+  
+        overflow-y: scroll;
+        height: calc(100% - 30px);
+
+}
+.info-image {
+  float: left;
+}
+#heatmap-info-box .info-box-elem {
+  margin: 10px 5px;
+}
+
+.info-box-elem {
+  display: block;
+  float: left;
+}
+
+#heatmap-info-box .info-box-header {
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  font-weight: 600;
+}
+
+#heatmap-info-box .info-header {
+  margin-left: 10px;
+
+  float: left;
+  width: calc(100% - 85px);
+  font-weight: 600;
+}
+.info-header {
+  font-size: 18px;
+  margin: 0px;
+  font-weight: 600;
+}
+div#incidents-by-year-step-info-box {
+    overflow-x: hidden;
+    /* overflow-y: hidden; */
+}
+
+.info-link {
+  margin-left: 10px;
+  float: right;
+  width: calc(100% - 85px);
+  font-weight: 100;
+  font-size: 14px;
+}
+
+#incidents-by-year-trellis {
+  height:fit-content;
+  height: -moz-fit-content;
+}
+.incidents-trellis {
+  float: left;
+  margin-left: 25px;
+  width: 30%;
+  margin-top: 10px;
+  height: 50%;
+}
+
+
+
+.muze-tooltip-box,
+#incidents-by-year-heatmap .muze-tooltip-content-container,
+#incidents-by-year-trellis .muze-tooltip-content-container {
+  padding-top: 0px !important;
+  padding-bottom: 2px !important;
+}
+
+.tooltip-mod {
+  left: 10px;
+}
+
+.tooltip-header {
+  font-size: 20px;
+  margin: 0px;
+  font-weight: 600;
+}
+
+.tooltip-sub-header {
+  font-size: 16px;
+  margin: 0px;
+  font-weight: 400;
+}
+
+#incidents-by-year-heatmap .ticks-link,
+#incidents-by-year-trellis .ticks-link {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+  fill: #4eadf8;
+}
+#clear-button {
+    cursor: pointer;
+    position: absolute;
+    /* top: -5px; */
+    right: 0px;
+    /* background: #eee; */
+    padding: 3px 10px;
+    display: none;
+    
+    color: #4eadf8;
+   
+    /* border: 1px solid rgba(0,0,0,0.4); */
+}
+#clear-button:hover {
+  text-decoration: underline;
+}
+
+#empty-info{
+    border-bottom: none !important;
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    height: 100%;
+    font-size: 16px !important;
+}
+
+.contribution-layer rect {
+    fill-opacity: 0.3;
+    fill: #414141 !important;
+}
+
+.muze-contributionLayer-text text{
+
+    fill: #000 !important;
+
+}
+
+
+.airline {
+  font-size: 20px;
+}
+
+#number {
+  font-family: 'Fira Mono', monospace;
+  font-size: 12px;
+}
+
+.text {
+  font-size: 9px;
+  vertical-align: super;
+  
+}
