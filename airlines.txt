@@ -2,6 +2,7 @@
 air-india
 jet-airways
 indigo
+spicejet
 goair
 airasia
 vistara
