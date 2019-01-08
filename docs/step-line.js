@@ -22,8 +22,24 @@ const registerListener = (canvas, datamodel, type) => {
     .dissociateSideEffect(["selectionBox", "brush"])
     .dissociateSideEffect(["highlighter", "select"])
     .dissociateSideEffect(["tooltip", "brush,select"])
+    .registerPhysicalActions({
+      /* to register the action */
+      ctrlClick: firebolt => (targetEl, behaviours) => {
+       const rows =  document.getElementsByClassName('muze-grid-layout-row');
+       for(let m = 0; m<rows.length; m++){
+         const width = rows[m].style.width.substring(0, rows[m].style.width.length - 2);
+         rows[m].style.width = `${+width + 1}px`;
+       }
+      }
+    })
+    .registerPhysicalBehaviouralMap({
+      ctrlClick: {
+        behaviours: ["select"]
+      }
+    })
     .registerSideEffects(
       class InfoBoxSideEffect extends SpawnableSideEffect {
+        
         static formalName() {
           return "info-box";
         }
@@ -332,6 +348,7 @@ createStepLine = (dataModel, numberOfIncidents) => {
     })
     .mount("#incidents-by-year-step-chart");
   registerListener(canvas, dataModel, "daily");
+ 
 };
 
 createBar = (dataModel, dailyDm) => {

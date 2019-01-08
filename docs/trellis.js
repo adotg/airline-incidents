@@ -5,19 +5,27 @@ const createTrellis = (datamodel, airlines) => {
   );
   parentDiv.innerHTML = "";
   let parentDivHeight = 0;
+  const screenWidth = window.innerWidth;
+  let widthForChart = 0;
+  let availableWidth = screenWidth - 200;
   let trellisChartDim = { width: 0, height: 0 };
-  if (screen.width < 480) {
+  if (screenWidth < 480) {
     trellisChartDim.width = "calc(100% - 10px)";
     trellisChartDim.height = "250px";
     parentDivHeight = 260* airlines.length;
+    availableWidth = screenWidth - 80;
+    widthForChart = availableWidth - 10;
 
-  } else if (screen.width < 1080) {
+  } else if (screenWidth < 1080) {
     trellisChartDim.width = "calc(50% - 30px)";
+    availableWidth = screenWidth - 120;
+    widthForChart =availableWidth/2 - 30
     trellisChartDim.height = "250px";
     parentDivHeight = 260* Math.ceil(airlines.length/2);
   } else {
     trellisChartDim.width = "calc(33.33% - 25px)";
     trellisChartDim.height = "250px";
+    widthForChart = availableWidth/3 - 25;
     parentDivHeight = 260* Math.ceil(airlines.length/3);
   }
   parentDiv.style.height = `${parentDivHeight}px`;
@@ -188,6 +196,12 @@ const createTrellis = (datamodel, airlines) => {
       .registerPhysicalActions({
         /* to register the action */
         ctrlClick: firebolt => (targetEl, behaviours) => {
+         const rows =  document.getElementsByClassName('muze-grid-layout-row');
+        
+         for(let m = 0; m<rows.length; m++){
+           const width = rows[m].style.width.substring(0, rows[m].style.width.length - 2);
+           rows[m].style.width = `${+width + 1}px`;
+         }
           targetEl.on("click", () => {
             behaviours.forEach(behaviour =>
               firebolt.dispatchBehaviour(behaviour, {
